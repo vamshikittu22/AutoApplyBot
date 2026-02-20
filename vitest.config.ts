@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [WxtVitest()],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: [],
     coverage: {
       provider: 'v8',
