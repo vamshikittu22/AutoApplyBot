@@ -33,8 +33,9 @@ This extension is **offline-first by design**.
 | State Management | **Zustand** | ~1KB; no boilerplate; perfect for extension popup + content script state |
 | Local Storage | **Chrome Storage API (local)** | Built-in, no extra library needed; stores profile, tracker, field mappings |
 | Data Encryption | **Web Crypto API (native)** | Built into every browser; AES-GCM encryption for profile data; zero dependencies |
-| Resume Parsing (PDF) | **pdf.js (Mozilla)** | Runs entirely in the browser; no server upload needed; well-maintained |
-| Resume Parsing (DOCX) | **mammoth.js** | Client-side DOCX → plain text extraction; lightweight |
+| Resume Parsing (Text) | **Vanilla JS + Regex** | Paste-only in v1; extract structured data from plain text using pattern matching |
+| Resume Parsing (PDF) | **pdf.js (Mozilla)** — *Deferred to v2* | File upload parsing deferred; v1 is paste-only for simplicity |
+| Resume Parsing (DOCX) | **mammoth.js** — *Deferred to v2* | File upload parsing deferred; v1 is paste-only for simplicity |
 | Form Detection | **Vanilla JS + MutationObserver** | No library needed; scoped to form elements only; native and fast |
 | Build Tool | **Vite** | Fast HMR, small output bundles; built into WXT |
 | Package Manager | **pnpm** | Faster installs, better disk usage than npm/yarn |
@@ -46,9 +47,9 @@ This extension is **offline-first by design**.
 
 | Layer | Technology | Rationale |
 |-------|-----------|-----------|
-| AI Provider | **OpenAI GPT-4o mini (primary)** | Cost-efficient, fast, high quality for short answer generation |
+| AI Provider | **OpenAI GPT-4o mini (primary)** | Cost-efficient, fast, high quality for short answer generation. **v1 uses mock responses in development.** |
 | AI Fallback | **Anthropic Claude Haiku** | Optional fallback if user prefers or GPT is unavailable |
-| API Key Storage | **Chrome Storage API (local, encrypted)** | User provides their own API key; stored locally encrypted via Web Crypto; never sent anywhere except directly to OpenAI/Anthropic |
+| API Key Storage | **Chrome Storage API (local, encrypted)** | User provides their own API key; stored locally encrypted via Web Crypto; never sent anywhere except directly to OpenAI/Anthropic. **Development uses mock responses until user adds key.** |
 | API Calls | **Direct from extension → AI provider** | No backend proxy needed for v1; user's own key, user's own usage |
 | AI Activation | **Online check before every AI call** | `navigator.onLine` guard; graceful fallback message if offline |
 
@@ -216,6 +217,9 @@ All data lives in the user's browser. No external database. No user account requ
 | Vector search / embeddings | v2+ only |
 | Firefox build | Defer until Chrome is stable and validated |
 | Analytics SDK (Mixpanel, Amplitude, etc.) | Do not add tracking without explicit user opt-in and a clear privacy policy |
+| PDF/DOCX file upload parsing (pdf.js, mammoth.js) | Deferred to v2; v1 is paste-only for simplicity |
+| LinkedIn Easy Apply integration | Deferred to v2 due to ban risk; requires additional research on detection patterns |
+| Indeed Apply, Ashby, other ATS platforms | v2+ expansion after core 3 platforms (Workday, Greenhouse, Lever) are validated |
 
 ---
 

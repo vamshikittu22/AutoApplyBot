@@ -78,16 +78,18 @@ There is a clear gap for a **quality-first, safety-conscious, assisted applicati
 
 **Goal:** Let users build a single, reusable profile that powers all autofill and AI features.
 
-**US1.1 — Resume Upload & Parsing**
-- As a user, I want to upload my resume as a PDF or DOCX and have the extension extract my personal info, work history, education, skills, and links automatically so I don't have to type it all in.
+**US1.1 — Resume Paste & Parsing (v1)**
+- As a user, I want to paste my resume text into the extension and have it extract my personal info, work history, education, skills, and links automatically so I don't have to type it all in.
 - Acceptance criteria:
-  - At least 80% of key fields parsed correctly from a typical resume on first import.
+  - At least 75% of key fields parsed correctly from pasted resume text on first import.
   - Unconfident or low-confidence fields are flagged for user review, not silently filled with wrong data.
   - User can edit every parsed field before saving.
+  - **Note:** PDF/DOCX file upload deferred to v2. v1 is paste-only for simplicity.
 
-**US1.2 — LinkedIn URL Import (Optional)**
-- As a user, I want to paste my LinkedIn URL and have the extension pull my professional summary so I can skip resume upload if I prefer.
-- Acceptance criteria:
+**US1.2 — LinkedIn URL Import (Optional — Deferred to v2)**
+- *This feature is deferred to v2 to reduce scope and avoid LinkedIn TOS concerns.*
+- As a user, I want to paste my LinkedIn URL and have the extension pull my professional summary so I can skip resume paste if I prefer.
+- Acceptance criteria (v2):
   - Extension reads publicly available LinkedIn profile data only — no login credentials required.
   - User sees a preview before import is confirmed.
 
@@ -109,7 +111,7 @@ There is a clear gap for a **quality-first, safety-conscious, assisted applicati
 - As a user, I want to export all my stored data as a JSON file and delete my account and all associated data with a single action.
 - Acceptance criteria:
   - Export produces a complete, human-readable JSON of all profile and tracker data.
-  - Delete is irreversible and confirmed by a second prompt; removes data from local storage and cloud (Supabase).
+  - Delete is irreversible and confirmed by a second prompt; removes data from local storage (v1 is local-only, no cloud sync).
 
 ---
 
@@ -117,11 +119,12 @@ There is a clear gap for a **quality-first, safety-conscious, assisted applicati
 
 **Goal:** Reliable, safe, user-initiated autofill on the 6 core ATS platforms.
 
-**US2.1 — ATS Recognition**
+**US2.1 — ATS Recognition (v1: Workday, Greenhouse, Lever)**
 - As a user, when I open a job application page on a supported ATS, I want the extension to automatically detect it and offer autofill without any configuration.
 - Acceptance criteria:
-  - Detection accuracy ≥95% on a curated test matrix of 20+ application URLs per supported ATS.
-  - Supported ATSes v1: Workday, Greenhouse, Lever, Ashby, LinkedIn Easy Apply, Indeed Apply.
+  - Detection accuracy ≥95% on a curated test matrix of 10+ application URLs per supported ATS.
+  - **Supported ATSes v1:** Workday (priority 1), Greenhouse (priority 2), Lever (priority 3).
+  - **Deferred to v2:** LinkedIn Easy Apply, Indeed Apply, Ashby.
   - When detection fails or confidence is low, extension enters Helper Mode rather than attempting autofill.
 
 **US2.2 — One-Click Profile Autofill**
@@ -153,7 +156,7 @@ There is a clear gap for a **quality-first, safety-conscious, assisted applicati
 
 **Goal:** High-quality, role-aware answer drafts for screening questions that need minimal editing.
 
-**US3.1 — Short-Answer Draft Generation**
+**US3.1 — Short-Answer Draft Generation (Mock AI in Development)**
 - As a user, when I see a short-answer screening question on an ATS form, I want to click "Suggest Answer" and receive 2–3 tailored draft options based on my profile and the job description.
 - Acceptance criteria:
   - Generation is triggered only by explicit user click on the "Suggest Answer" button next to the detected question field.
@@ -161,6 +164,7 @@ There is a clear gap for a **quality-first, safety-conscious, assisted applicati
   - Each option has a distinct tone: Professional, Concise, Story-Driven.
   - User selects, edits, and manually clicks to insert the chosen answer into the field.
   - The extension never automatically types into a field with an AI-generated answer.
+  - **Development note:** Uses mock AI responses until user adds their own OpenAI/Claude API key.
 
 **US3.2 — Role-Specific Tuning**
 - As a healthcare user, I want AI answers to mention clinical outcomes, patient volume, certifications, and licensure where relevant — not generic corporate phrases.

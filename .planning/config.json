@@ -1,0 +1,59 @@
+{
+  "project_name": "AutoApply Copilot",
+  "version": "1.0.0",
+  "workflow": {
+    "mode": "yolo",
+    "depth": "standard",
+    "execution": "autonomous_after_approval",
+    "checkpoints": "phase_boundaries"
+  },
+  "git": {
+    "commit_strategy": "atomic",
+    "auto_commit": true,
+    "commit_prefix_style": "conventional"
+  },
+  "research": {
+    "enabled": true,
+    "mode": "suggest_improvements",
+    "use_existing_research": true
+  },
+  "testing": {
+    "strategy": "balanced",
+    "coverage_target": 80,
+    "tdd_for_critical": true
+  },
+  "ai_integration": {
+    "development_mode": "mock_responses",
+    "production_ready": false,
+    "api_key_source": "user_provided"
+  },
+  "scope": {
+    "version": "1.0",
+    "resume_parsing": "paste_only",
+    "ats_platforms": {
+      "priority_order": ["workday", "greenhouse", "lever"],
+      "v1_included": ["workday", "greenhouse", "lever"],
+      "v2_deferred": ["linkedin_easy_apply", "indeed", "ziprecruiter"]
+    },
+    "features": {
+      "v1": [
+        "paste_resume_parsing",
+        "profile_management",
+        "ats_detection",
+        "autofill_engine",
+        "mock_ai_generation",
+        "application_tracking"
+      ],
+      "v2": [
+        "file_upload_parsing",
+        "per_jd_tailoring",
+        "linkedin_easy_apply",
+        "real_ai_integration"
+      ]
+    }
+  },
+  "phases": {
+    "start_phase": 0,
+    "total_phases": 6
+  }
+}

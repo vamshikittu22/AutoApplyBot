@@ -40,10 +40,10 @@ These are not features. They are product identity statements. If a feature viola
 
 ### Must-Have (P0 — Without These, the Product Does Not Work)
 
-- **Profile builder:** Import resume or manually enter work history, education, skills, contact info, links.
-- **ATS autofill on 6 core platforms:** Workday, Greenhouse, Lever, Ashby, LinkedIn Easy Apply, Indeed Apply.
+- **Profile builder:** Paste resume text → parse into structured profile OR manually enter work history, education, skills, contact info, links.
+- **ATS autofill on 3 core platforms (v1):** Workday, Greenhouse, Lever (priority order: Workday first for market share).
 - **User-initiated only:** "Autofill Profile" button. No auto-typing. No auto-submit.
-- **AI short-answer drafts:** 2–3 options per question, generated on user request, always editable.
+- **AI short-answer drafts (mock in dev):** 2–3 options per question, generated on user request, always editable. Uses mock responses during development.
 - **Helper Mode:** Sidebar with copy-paste profile snippets for unsupported sites.
 - **Application auto-log:** Log job title, company, date, platform on each submission.
 
@@ -66,27 +66,31 @@ These are not features. They are product identity statements. If a feature viola
 
 ## What Is Explicitly Out of v1
 
-- Firefox support (performance risks; defer until Chrome is stable).
-- Web dashboard (tracker lives in popup only for v1).
-- Batch apply or multi-job queue.
-- Resume scoring or keyword optimization.
-- Job search or recommendation features.
-- Interview prep tools.
-- LinkedIn profile editing.
-- Multi-profile management.
+- **LinkedIn Easy Apply** (deferred to v2 due to ban risk — requires more research on detection patterns)
+- **Indeed Apply, Ashby, other ATS platforms** (v2+ expansion after core 3 are validated)
+- **File upload resume parsing** (v1 is paste-only; PDF/DOCX upload deferred to v2)
+- **Per-JD resume tailoring** (v2 feature — requires AI analysis of job descriptions)
+- Firefox support (performance risks; defer until Chrome is stable)
+- Web dashboard (tracker lives in popup only for v1)
+- Batch apply or multi-job queue
+- Resume scoring or keyword optimization
+- Job search or recommendation features
+- Interview prep tools
+- LinkedIn profile editing
+- Multi-profile management
 
 ---
 
 ## v1 Supported Platforms
 
-| Platform | Type | Notes |
-|----------|------|-------|
-| LinkedIn Easy Apply | Job Board + Apply Flow | Most common; highest volume |
-| Indeed Apply | Job Board + Apply Flow | High user demand |
-| Workday | ATS | Most common enterprise ATS |
-| Greenhouse | ATS | Common in tech companies |
-| Lever | ATS | Common in startups |
-| Ashby | ATS | Growing in modern tech companies |
+| Platform | Type | Priority | Notes |
+|----------|------|----------|-------|
+| Workday | ATS | **P0 (v1)** | 50% market share; highest technical complexity (Shadow DOM); build first to validate approach |
+| Greenhouse | ATS | **P0 (v1)** | 25% market share; common in tech companies; iframe-based forms |
+| Lever | ATS | **P0 (v1)** | 10% market share; common in startups; simplest DOM structure |
+| LinkedIn Easy Apply | Job Board + Apply Flow | **Deferred to v2** | Ban risk too high; needs more research before implementation |
+| Indeed Apply | Job Board + Apply Flow | **Deferred to v2** | High user demand but lower priority than core ATS |
+| Ashby | ATS | **Deferred to v2** | Growing platform; add after v1 validation |
 
 Any other platform gets Helper Mode (sidebar) by default.
 
@@ -109,7 +113,7 @@ The product is a success at v1 launch if:
 ### First-Time Setup (Target: <3 minutes)
 1. Install from Chrome Web Store.
 2. Click extension icon → see onboarding overlay.
-3. Upload resume PDF → review parsed fields → save profile.
+3. **Paste resume text** → review parsed fields → save profile.
 4. Select role type (Tech / Healthcare / Finance / etc.).
 5. Done. Extension is ready to assist.
 
