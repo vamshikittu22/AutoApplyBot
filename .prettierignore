@@ -1,0 +1,9 @@
+.output
+.wxt
+node_modules
+dist
+build
+coverage
+*.md
+package-lock.json
+pnpm-lock.yaml
