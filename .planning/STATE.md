@@ -8,9 +8,9 @@
 
 **Last Updated:** 2026-02-20
 **Current Phase:** Phase 0 (Foundation & Setup)
-**Current Plan:** 01 of 04 complete
-**Phase Status:** In Progress (Plan 01 complete, Plan 02 next)
-**Overall Progress:** 25% Phase 0 complete (1/4 plans done)
+**Current Plan:** 02 of 04 complete
+**Phase Status:** In Progress (Plans 01-02 complete, Plan 03 next)
+**Overall Progress:** 50% Phase 0 complete (2/4 plans done)
 
 ---
 
@@ -18,7 +18,7 @@
 
 | Phase | Status | Start Date | End Date | Progress |
 |-------|--------|------------|----------|----------|
-| Phase 0: Foundation & Setup | In Progress | 2026-02-20 | - | 25% (1/4 plans) |
+| Phase 0: Foundation & Setup | In Progress | 2026-02-20 | - | 50% (2/4 plans) |
 | Phase 1: Profile & Resume | Not Started | - | - | 0% |
 | Phase 2: ATS Detection & Autofill | Not Started | - | - | 0% |
 | Phase 3: AI Answer Generation | Not Started | - | - | 0% |
@@ -111,9 +111,32 @@
 
 ---
 
+### 2026-02-20: Plan 00-02 Execution Decisions
+
+**Decision:** Used ESLint 10.0.1 with flat config format
+**Rationale:** ESLint 10+ requires new eslint.config.mjs format, old .eslintrc deprecated
+**Impact:** Had to adapt plan to use flat config API, but achieved all objectives
+**Status:** LOCKED
+
+---
+
+**Decision:** Simplified ESLint config without full React plugin integration
+**Rationale:** eslint-plugin-react has compatibility issues with ESLint 10.0.1 API changes
+**Impact:** Still get TypeScript-aware linting; React prop types handled by TypeScript anyway
+**Status:** LOCKED
+
+---
+
+**Decision:** Set no-console to 'warn' not 'error'
+**Rationale:** Console logging is acceptable in extension background scripts and development
+**Impact:** Allows debugging without breaking lint, warns to remove before production
+**Status:** LOCKED
+
+---
+
 ## Active Blockers
 
-*No blockers - Phase 0 Plan 01 complete, ready for Plan 02*
+*No blockers - Phase 0 Plans 01-02 complete, ready for Plan 03*
 
 ---
 
@@ -121,7 +144,7 @@
 
 ### Immediate (This Session)
 - [x] Execute Phase 0 Plan 01 (WXT foundation setup)
-- [ ] Execute Phase 0 Plan 02 (ESLint/Prettier/Vitest setup)
+- [x] Execute Phase 0 Plan 02 (TypeScript strict + ESLint + Prettier)
 - [ ] Execute Phase 0 Plan 03 (Tailwind CSS setup)
 - [ ] Execute Phase 0 Plan 04 (Playwright E2E setup)
 
@@ -137,6 +160,7 @@
 | Phase-Plan | Duration | Tasks | Files | Date |
 |------------|----------|-------|-------|------|
 | 00-01 | 3 min | 3 | 33 | 2026-02-20 |
+| 00-02 | 7 min | 3 | 13 | 2026-02-20 |
 
 ---
 
@@ -217,6 +241,17 @@
 - Production build validated: 147.81 kB bundle
 - Created 00-01-SUMMARY.md documenting accomplishments
 - Status: Plan 01 complete (3 min), ready for Plan 02
+
+### 2026-02-20: Phase 0 Plan 02 Execution
+- Executed 00-02-PLAN.md (TypeScript strict + ESLint + Prettier)
+- Configured TypeScript strict mode with all safety flags (12 strict flags)
+- Installed ESLint 10.0.1 with flat config format (new requirement)
+- Adapted to ESLint 10 breaking changes (flat config, React plugin incompatibility)
+- Configured Prettier 3.8.1 with auto-format on save
+- Created .vscode/settings.json for on-save enforcement
+- All verification checks pass: type-check, lint, format
+- Created 00-02-SUMMARY.md documenting 3 auto-fixed deviations
+- Status: Plan 02 complete (7 min), ready for Plan 03
 
 ---
 
