@@ -17,10 +17,16 @@
 
 ### Phase 0: Foundation & Setup
 **Timeline:** Week 1
-**Goal:** Fully configured, runnable Chrome extension shell
+**Goal:** Fully configured, runnable Chrome extension shell with complete tech stack
 **Requirements Covered:** REQ-NFR-02 (security setup), REQ-NFR-04 (manifest setup)
 
-**Plans:** [To be planned]
+**Plans:** 4 plans in 3 waves
+
+Plans:
+- [ ] 00-01-PLAN.md — Bootstrap WXT project + folder structure (Wave 1)
+- [ ] 00-02-PLAN.md — Configure TypeScript strict + ESLint + Prettier (Wave 2)
+- [ ] 00-03-PLAN.md — Set up Vitest + Playwright testing (Wave 3)
+- [ ] 00-04-PLAN.md — Integrate Tailwind CSS + Zustand state (Wave 3)
 
 **Definition of Done:**
 - [ ] Extension loads in Chrome without errors
@@ -30,6 +36,8 @@
 - [ ] Git repository initialized with atomic commits
 - [ ] WXT framework configured
 - [ ] Basic manifest.json created
+- [ ] Testing infrastructure functional (Vitest + Playwright)
+- [ ] Complete tech stack integrated (React + Tailwind + Zustand)
 
 ---
 
