@@ -54,7 +54,13 @@ Plans:
 - REQ-PRO-05: Encrypted local storage
 - REQ-PRO-06: Data export & delete
 
-**Plans:** [To be planned]
+**Plans:** 4 plans in 3 waves
+
+Plans:
+- [x] 01-01-PLAN.md — Type system & profile schema (Wave 1)
+- [x] 01-02-PLAN.md — Resume text parser with ≥75% accuracy (Wave 2)
+- [x] 01-03-PLAN.md — Encrypted storage layer (Web Crypto + Chrome Storage) (Wave 2)
+- [x] 01-04-PLAN.md — Profile editor UI with Zustand integration (Wave 3)
 
 **Definition of Done:**
 - [ ] User can paste resume text and see parsed fields
