@@ -6,13 +6,22 @@ function App(): React.ReactElement {
   const { profile, setProfile } = useProfileStore();
 
   const handleDemoProfile = () => {
+    const now = new Date().toISOString();
     setProfile({
       personal: {
         name: 'Demo User',
         email: 'demo@example.com',
         phone: '555-0100',
+        location: 'San Francisco, CA',
       },
-      isComplete: false,
+      workHistory: [],
+      education: [],
+      skills: [],
+      links: {},
+      domainExtras: {},
+      rolePreference: 'Other',
+      createdAt: now,
+      updatedAt: now,
     });
   };
 
@@ -22,7 +31,7 @@ function App(): React.ReactElement {
         <h1 className="text-xl font-bold">AutoApply Copilot</h1>
         <p className="text-sm opacity-90 mt-1">Your job application assistant</p>
       </div>
-      
+
       <div className="p-4">
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
           <p className="text-green-800 text-sm font-medium">✓ Phase 0: Foundation Complete</p>
@@ -43,10 +52,8 @@ function App(): React.ReactElement {
         >
           Load Demo Profile
         </button>
-        
-        <p className="text-gray-500 text-xs mt-4 text-center">
-          Ready for Phase 1 development
-        </p>
+
+        <p className="text-gray-500 text-xs mt-4 text-center">Ready for Phase 1 development</p>
       </div>
     </div>
   );
