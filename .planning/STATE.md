@@ -6,11 +6,11 @@
 
 ## Current Status
 
-**Last Updated:** 2026-02-20
-**Current Phase:** Phase 0 (Foundation & Setup)
-**Current Plan:** 04 of 04 complete
-**Phase Status:** Complete (All 4 plans done)
-**Overall Progress:** 100% Phase 0 complete (4/4 plans done)
+**Last Updated:** 2026-02-21
+**Current Phase:** Phase 1 (Profile Management & Resume Parsing)
+**Current Plan:** 01 of 04 complete
+**Phase Status:** In Progress (1/4 plans done)
+**Overall Progress:** Phase 1: 25% complete (1/4 plans done)
 
 ---
 
@@ -19,7 +19,7 @@
 | Phase | Status | Start Date | End Date | Progress |
 |-------|--------|------------|----------|----------|
 | Phase 0: Foundation & Setup | Complete | 2026-02-20 | 2026-02-20 | 100% (4/4 plans) |
-| Phase 1: Profile & Resume | Not Started | - | - | 0% |
+| Phase 1: Profile & Resume | In Progress | 2026-02-21 | - | 25% (1/4 plans) |
 | Phase 2: ATS Detection & Autofill | Not Started | - | - | 0% |
 | Phase 3: AI Answer Generation | Not Started | - | - | 0% |
 | Phase 4: Job Tracker & Safety | Not Started | - | - | 0% |
@@ -153,11 +153,32 @@
 **Impact:** Store tests run cleanly (2/2 pass), can recreate WXT tests if needed in Phase 1
 **Status:** TEMPORARY (may recreate WXT browser tests later if needed)
 
+### 2026-02-21: Plan 01-01 Execution Decisions
+
+**Decision:** Used factory function createEmptyProfile() instead of const EMPTY_PROFILE
+**Rationale:** Factory ensures fresh timestamps on each call; const would reuse same timestamp
+**Impact:** Cleaner API for creating new profiles, no timestamp mutation issues
+**Status:** LOCKED
+
+---
+
+**Decision:** Added ParseStats interface beyond plan specification
+**Rationale:** Plan mentioned tracking ≥75% accuracy but didn't define structure for stats calculation
+**Impact:** Provides clear interface for parser to report success metrics in Plan 02
+**Status:** LOCKED
+
+---
+
+**Decision:** Added FIELD_LABELS constant for UI display names
+**Rationale:** DRY principle - avoids duplicating field labels in editor and autofill components
+**Impact:** Consistent labeling across all UIs in Phase 1 and Phase 2
+**Status:** LOCKED
+
 ---
 
 ## Active Blockers
 
-*No blockers - Phase 0 Complete! All 4 plans executed successfully.*
+*No blockers - Phase 1 Plan 01 complete. Ready for Plan 02.*
 
 ---
 
@@ -168,11 +189,12 @@
 - [x] Execute Phase 0 Plan 02 (TypeScript strict + ESLint + Prettier)
 - [x] Execute Phase 0 Plan 03 (Vitest unit testing)
 - [x] Execute Phase 0 Plan 04 (Tailwind CSS + Zustand)
+- [x] Execute Phase 1 Plan 01 (Profile type system)
 
-### Next (After Phase 0)
-- [ ] User review: Phase 0 completion checkpoint
-- [ ] Plan Phase 1 (Profile & Resume Management)
-- [ ] Execute Phase 1 plans
+### Next (After Phase 1 Plan 01)
+- [ ] Execute Phase 1 Plan 02 (Resume parser implementation)
+- [ ] Execute Phase 1 Plan 03 (Profile editor UI)
+- [ ] Execute Phase 1 Plan 04 (Profile storage with encryption)
 
 ---
 
@@ -184,6 +206,7 @@
 | 00-02 | 7 min | 3 | 13 | 2026-02-20 |
 | 00-03 | 4 min | 2 | 4 | 2026-02-20 |
 | 00-04 | 6 min | 3 | 11 | 2026-02-20 |
+| 01-01 | 5 min | 3 | 3 | 2026-02-21 |
 
 ---
 
@@ -298,6 +321,18 @@
 - Store tests pass (2/2 tests)
 - Created 00-04-SUMMARY.md
 - Status: Plan 04 complete (6 min), Phase 0 COMPLETE
+
+### 2026-02-21: Phase 1 Plan 01 Execution
+- Executed 01-01-PLAN.md (Profile type system foundation)
+- Profile type already complete from Phase 0 Plan 04 - verified and enhanced
+- Created src/types/resume.ts with ParsedResume, FieldConfidence, ParserResult types
+- Created src/constants/profile-schema.ts with validation rules and role-specific mappings
+- Fixed blocking type error in popup App.tsx (missing Profile fields)
+- Added ParseStats interface for accuracy tracking (beyond plan spec)
+- All types pass TypeScript strict mode (pnpm type-check)
+- 3 atomic commits: fix (125a6db), feat (6482039), feat (a8dc474)
+- Created 01-01-SUMMARY.md with self-check verification
+- Status: Plan 01 complete (5 min), ready for Plan 02 (Resume parser)
 
 ---
 
