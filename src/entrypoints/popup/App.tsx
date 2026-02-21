@@ -1,29 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useProfileStore } from '@/lib/store/profile-store';
 import './style.css';
 
 function App(): React.ReactElement {
-  const { profile, setProfile } = useProfileStore();
+  const { profile, loadProfile, saveProfile, updatePersonal, isLoading } = useProfileStore();
 
-  const handleDemoProfile = () => {
-    const now = new Date().toISOString();
-    setProfile({
-      personal: {
-        name: 'Demo User',
-        email: 'demo@example.com',
-        phone: '555-0100',
-        location: 'San Francisco, CA',
-      },
-      workHistory: [],
-      education: [],
-      skills: [],
-      links: {},
-      domainExtras: {},
-      rolePreference: 'Other',
-      createdAt: now,
-      updatedAt: now,
+  // Load profile on mount
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
+
+  const handleDemoProfile = async () => {
+    updatePersonal({
+      name: 'Demo User',
+      email: 'demo@example.com',
+      phone: '555-0100',
+      location: 'San Francisco, CA',
     });
+    await saveProfile();
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-80 min-h-96 bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600 text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-80 min-h-96 bg-white">
@@ -34,13 +40,13 @@ function App(): React.ReactElement {
 
       <div className="p-4">
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-          <p className="text-green-800 text-sm font-medium">✓ Phase 0: Foundation Complete</p>
+          <p className="text-green-800 text-sm font-medium">✓ Phase 1: In Progress (75%)</p>
         </div>
 
         {profile ? (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
             <p className="text-blue-900 text-sm font-medium">Profile Loaded</p>
-            <p className="text-blue-700 text-xs mt-1">{profile.personal.name}</p>
+            <p className="text-blue-700 text-xs mt-1">{profile.personal.name || 'No name set'}</p>
           </div>
         ) : (
           <p className="text-gray-600 text-sm mb-4">No profile loaded</p>
@@ -53,7 +59,7 @@ function App(): React.ReactElement {
           Load Demo Profile
         </button>
 
-        <p className="text-gray-500 text-xs mt-4 text-center">Ready for Phase 1 development</p>
+        <p className="text-gray-500 text-xs mt-4 text-center">Phase 1 Plan 04: Profile Editor</p>
       </div>
     </div>
   );
