@@ -65,6 +65,22 @@ export function detectSections(resumeText: string): DetectedSection[] {
   const headerMatches = findSectionHeaders(lines);
 
   if (headerMatches.length > 0) {
+    // Check if there's content before the first header (likely contact info)
+    const firstHeaderLine = headerMatches[0]?.lineIndex || 0;
+    if (firstHeaderLine > 0) {
+      const preHeaderContent = lines.slice(0, firstHeaderLine).join('\n').trim();
+      if (preHeaderContent.length > 0) {
+        // Content before first header is likely contact info
+        sections.push({
+          type: ResumeSection.CONTACT,
+          startLine: 0,
+          endLine: firstHeaderLine,
+          content: preHeaderContent,
+          confidence: 80, // High confidence for pre-header content
+        });
+      }
+    }
+
     // Build sections from header matches
     for (let i = 0; i < headerMatches.length; i++) {
       const currentHeader = headerMatches[i];
@@ -72,18 +88,22 @@ export function detectSections(resumeText: string): DetectedSection[] {
 
       const nextHeader = headerMatches[i + 1];
 
-      const startLine = currentHeader.lineIndex;
+      // Start AFTER the header line (skip the header itself)
+      const startLine = currentHeader.lineIndex + 1;
       const endLine = nextHeader ? nextHeader.lineIndex : lines.length;
 
       const content = lines.slice(startLine, endLine).join('\n').trim();
 
-      sections.push({
-        type: currentHeader.type,
-        startLine,
-        endLine,
-        content,
-        confidence: currentHeader.confidence,
-      });
+      // Only add section if it has content
+      if (content.length > 0) {
+        sections.push({
+          type: currentHeader.type,
+          startLine,
+          endLine,
+          content,
+          confidence: currentHeader.confidence,
+        });
+      }
     }
   } else {
     // Step 2: No headers found - use heuristic structure detection
