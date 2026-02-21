@@ -199,11 +199,32 @@
 
 ---
 
+### 2026-02-21: Plan 01-02 Execution Decisions
+
+**Decision:** Use pure TypeScript/regex for resume parsing (no external libraries)
+**Rationale:** v1 is paste-only (no file upload), keeps bundle small, avoids pdf.js/mammoth.js dependencies
+**Impact:** Parser is lightweight (~900 lines total), fast, fully maintainable
+**Status:** LOCKED
+
+---
+
+**Decision:** Automatically treat pre-header content as contact section
+**Rationale:** Most resumes start with contact info before "EXPERIENCE" header - common format
+**Impact:** Fixes common case where contact was being skipped with explicit headers present
+**Status:** LOCKED
+
+---
+
+**Decision:** Three-tier confidence system (≥70% high, 50-69% medium, <50% low)
+**Rationale:** Aligns with REQ-PRO-01 ≥75% accuracy target; provides clear thresholds for UI color-coding
+**Impact:** Field editor can highlight low-confidence fields for user review
+**Status:** LOCKED
+
+---
+
 ## Active Blockers
 
-*No blockers - Phase 1 Plan 03 complete. Ready for Plan 04 (Profile editor UI).*
-
-**Note:** Plan 02 (Resume parser) was skipped in execution order - can be executed later or as needed.
+*No blockers - Phase 1 Plan 02 complete. Phase 1 is 75% complete (3/4 plans done). Ready for Plan 04 (Profile editor UI).*
 
 ---
 
@@ -215,13 +236,13 @@
 - [x] Execute Phase 0 Plan 03 (Vitest unit testing)
 - [x] Execute Phase 0 Plan 04 (Tailwind CSS + Zustand)
 - [x] Execute Phase 1 Plan 01 (Profile type system)
+- [x] Execute Phase 1 Plan 02 (Resume parser implementation)
 - [x] Execute Phase 1 Plan 03 (Profile storage with Chrome Storage API)
 
-### Next (After Phase 1 Plan 03)
-- [ ] Execute Phase 1 Plan 02 (Resume parser implementation)
+### Next (After Phase 1 Plan 02)
 - [ ] Execute Phase 1 Plan 04 (Profile editor UI)
-- [ ] Execute Phase 1 Plan 03 (Profile editor UI)
-- [ ] Execute Phase 1 Plan 04 (Profile storage with encryption)
+- [ ] Complete Phase 1 (4/4 plans done)
+- [ ] Begin Phase 2 (ATS Detection & Autofill)
 
 ---
 
@@ -234,9 +255,8 @@
 | 00-03 | 4 min | 2 | 4 | 2026-02-20 |
 | 00-04 | 6 min | 3 | 11 | 2026-02-20 |
 | 01-01 | 5 min | 3 | 3 | 2026-02-21 |
+| 01-02 | 8 min | 4 | 4 | 2026-02-21 |
 | 01-03 | 3 min | 2 | 4 | 2026-02-21 |
-
----
 
 ## Deferred to v2
 
@@ -375,6 +395,19 @@
 - Created 01-03-SUMMARY.md with self-check verification
 - Status: Plan 03 complete (3 min), ready for Plan 04 (Profile editor UI)
 - **Note:** Plan 02 (Resume parser) skipped - can be executed later
+
+### 2026-02-21: Phase 1 Plan 02 Execution
+- Executed 01-02-PLAN.md (Resume parser implementation)
+- Fixed pre-existing section-detector.ts TypeScript strict mode errors (5 errors)
+- Created src/lib/parser/field-extractor.ts with 4 extractor functions (contact, work, education, skills)
+- Created src/lib/parser/resume-parser.ts as main orchestrator with accuracy calculation
+- Created comprehensive unit tests: 15 test cases, all passing
+- Fixed 2 critical bugs via TDD: pre-header content detection, header line inclusion
+- Validated ≥75% accuracy requirement (REQ-PRO-01) through test coverage
+- Zero external parsing libraries - pure TypeScript + regex (~900 lines total)
+- 4 atomic commits: fix (5668462), feat (4dcb78a), feat (4e48b83), fix (473287f)
+- Created 01-02-SUMMARY.md with self-check verification
+- Status: Plan 02 complete (8 min), Phase 1 now 75% complete (3/4 plans done)
 
 ---
 
