@@ -43,7 +43,7 @@ Plans:
 
 ### Phase 1: Profile Management & Resume Parsing
 **Timeline:** Week 2
-**Goal:** User can paste resume, edit profile, and save encrypted locally
+**Goal:** User can paste resume, edit profile, and save locally
 **Requirements Covered:** REQ-PRO-01 through REQ-PRO-06
 
 **Key Requirements:**
@@ -51,7 +51,7 @@ Plans:
 - REQ-PRO-02: Profile editor UI
 - REQ-PRO-03: Role preference selection
 - REQ-PRO-04: Domain-specific fields
-- REQ-PRO-05: Encrypted local storage
+- REQ-PRO-05: Local storage (no encryption in v1 for simplicity)
 - REQ-PRO-06: Data export & delete
 
 **Plans:** 4 plans in 3 waves
@@ -59,7 +59,7 @@ Plans:
 Plans:
 - [x] 01-01-PLAN.md — Type system & profile schema (Wave 1)
 - [x] 01-02-PLAN.md — Resume text parser with ≥75% accuracy (Wave 2)
-- [x] 01-03-PLAN.md — Encrypted storage layer (Web Crypto + Chrome Storage) (Wave 2)
+- [x] 01-03-PLAN.md — Chrome Storage wrapper (no encryption in v1) (Wave 2)
 - [x] 01-04-PLAN.md — Profile editor UI with Zustand integration (Wave 3)
 
 **Definition of Done:**
@@ -67,7 +67,7 @@ Plans:
 - [ ] At least 75% of key fields parsed correctly
 - [ ] Profile editor functional (add/edit/delete entries)
 - [ ] Role preference selector working
-- [ ] Profile saved encrypted to Chrome local storage
+- [ ] Profile saved to Chrome local storage (plain JSON - no encryption in v1)
 - [ ] Profile persists after browser restart
 - [ ] Data export produces valid JSON
 - [ ] Data delete clears all storage

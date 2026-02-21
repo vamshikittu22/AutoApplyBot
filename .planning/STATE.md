@@ -95,6 +95,13 @@
 
 ---
 
+**Decision:** No encryption in v1 (plain Chrome Storage)
+**Rationale:** Simplifies Phase 1, faster development, Chrome Storage is already sandboxed per-extension
+**Impact:** Profile stored as plain JSON in chrome.storage.local, encryption deferred to v2
+**Status:** LOCKED
+
+---
+
 ### 2026-02-20: Plan 00-01 Execution Decisions
 
 **Decision:** Used WXT 0.20.17 as specified in RESEARCH.md
