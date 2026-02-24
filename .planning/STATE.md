@@ -353,6 +353,7 @@
 | 02-01 | 7 min | 4 | 7 | 2026-02-24 |
 | 02-02 | 4 min | 4 | 4 | 2026-02-24 |
 | 02-03 | 7 min | 7 | 7 | 2026-02-24 |
+| Phase 02-ats-detection-autofill P02-04 | 6 | 4 tasks | 4 files |
 
 ## Deferred to v2
 
