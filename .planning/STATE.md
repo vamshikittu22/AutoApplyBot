@@ -6,11 +6,11 @@
 
 ## Current Status
 
-**Last Updated:** 2026-02-21
-**Current Phase:** Phase 1 (Profile Management & Resume Parsing)
-**Current Plan:** 04 of 04 complete
-**Phase Status:** Complete (4/4 plans done)
-**Overall Progress:** Phase 1: 100% complete (4/4 plans done)
+**Last Updated:** 2026-02-24
+**Current Phase:** Phase 2 (ATS Detection & Autofill)
+**Current Plan:** 01 of 06 complete
+**Phase Status:** In Progress (1/6 plans done)
+**Overall Progress:** Phase 2: 17% complete (1/6 plans done)
 
 ---
 
@@ -20,7 +20,7 @@
 |-------|--------|------------|----------|----------|
 | Phase 0: Foundation & Setup | Complete | 2026-02-20 | 2026-02-20 | 100% (4/4 plans) |
 | Phase 1: Profile & Resume | Complete | 2026-02-21 | 2026-02-21 | 100% (4/4 plans) |
-| Phase 2: ATS Detection & Autofill | Not Started | - | - | 0% |
+| Phase 2: ATS Detection & Autofill | In Progress | 2026-02-24 | - | 17% (1/6 plans) |
 | Phase 3: AI Answer Generation | Not Started | - | - | 0% |
 | Phase 4: Job Tracker & Safety | Not Started | - | - | 0% |
 | Phase 5: Polish & Launch Prep | Not Started | - | - | 0% |
@@ -252,9 +252,32 @@
 
 ---
 
+### 2026-02-24: Plan 02-01 Execution Decisions
+
+**Decision:** Multi-signal detection with weighted scoring (URL 30%, DOM 40%, Attr 20%, Shadow 10%)
+**Rationale:** Research showed URL-only detection has high false positive rate; multiple independent signals improve accuracy to ≥95%
+**Impact:** Each platform detector checks 3-4 signals and combines scores for final confidence
+**Status:** LOCKED
+
+---
+
+**Decision:** Confidence thresholds at high ≥80%, medium ≥50%, low <50%
+**Rationale:** High confidence shows full UI, medium shows "maybe" indicator (per PRD), low triggers Helper Mode
+**Impact:** Platform detection returns null if confidence <50%, allowing fallback to manual activation
+**Status:** LOCKED
+
+---
+
+**Decision:** Shadow DOM as separate 10% weight signal for Workday
+**Rationale:** Workday uses Shadow DOM extensively (wd-app-root, wd-text-input components); other platforms don't use it
+**Impact:** Workday detector checks for shadowRoot presence, traverses Shadow DOM for form containers
+**Status:** LOCKED
+
+---
+
 ## Active Blockers
 
-*No blockers - Phase 1 complete (4/4 plans done). Ready for Phase 2: ATS Detection & Autofill.*
+*No blockers - Phase 2 Plan 01 complete. Ready for Plan 02-02: Content Script Infrastructure.*
 
 ---
 
@@ -270,8 +293,9 @@
 - [x] Execute Phase 1 Plan 03 (Profile storage with Chrome Storage API)
 - [x] Execute Phase 1 Plan 04 (Profile editor UI)
 
-### Next (After Phase 1 Complete)
-- [ ] Begin Phase 2 (ATS Detection & Autofill)
+### Next (After Phase 2 Plan 01)
+- [x] Execute Phase 2 Plan 01 (ATS Detection Foundation)
+- [ ] Execute Phase 2 Plan 02 (Content Script Infrastructure)
 - [ ] Plan Phase 2 with `/gsd-plan-phase 02-ats-detection-autofill`
 
 ---
@@ -288,6 +312,7 @@
 | 01-02 | 8 min | 4 | 4 | 2026-02-21 |
 | 01-03 | 3 min | 2 | 4 | 2026-02-21 |
 | 01-04 | 5 min | 4 | 7 | 2026-02-21 |
+| 02-01 | 7 min | 4 | 7 | 2026-02-24 |
 
 ## Deferred to v2
 
@@ -455,6 +480,19 @@
 - Status: Plan 04 complete (5 min), **Phase 1 COMPLETE (4/4 plans done)**
 - Total Phase 1 duration: 21 min (5+8+3+5)
 - Ready for Phase 2: ATS Detection & Autofill
+
+### 2026-02-24: Phase 2 Plan 01 Execution
+- Executed 02-01-PLAN.md (ATS Detection Foundation)
+- Created multi-signal ATS detection engine with 4 signal types (URL, DOM, attributes, Shadow DOM)
+- Built platform-specific detectors for Workday (with Shadow DOM), Greenhouse, and Lever
+- Implemented confidence scoring with weighted signals (URL 30%, DOM 40%, Attr 20%, Shadow 10%)
+- Created detection orchestrator that runs all detectors and returns highest confidence
+- Fixed 2 blocking/bug issues: unused import in test file, undefined handling in reduce
+- All new files pass TypeScript strict mode and ESLint
+- 4 atomic commits: feat (a52e722), feat (ded23a5), feat (aa0da5c), feat (b4bcdd4)
+- Created 02-01-SUMMARY.md with self-check verification
+- Status: Plan 01 complete (7 min), Phase 2 now 17% complete (1/6 plans done)
+- Ready for Plan 02-02: Content Script Infrastructure
 
 ---
 
