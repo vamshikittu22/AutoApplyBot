@@ -73,6 +73,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
   }
 
+  if (message.type === 'TOGGLE_HELPER_MODE') {
+    // Send message to active tab to toggle Helper Mode
+    chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
+      if (tab?.id) {
+        chrome.tabs.sendMessage(tab.id, {
+          type: message.activate ? 'ACTIVATE_HELPER_MODE' : 'DEACTIVATE_HELPER_MODE',
+          detection: message.detection,
+        });
+      }
+    });
+  }
+
   sendResponse({ success: true });
   return true;
 });
