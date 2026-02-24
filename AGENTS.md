@@ -15,6 +15,27 @@ You are not just writing code. You are making product decisions, architectural d
 
 ---
 
+## 🤖 Antigravity-Specific Configuration
+
+> **For Antigravity users:** See [.agent/README.md](./.agent/README.md) for project-specific workflows and global skill references.
+
+### Workflows (Slash Commands)
+| Command | File | Purpose |
+|---------|------|---------|
+| `/run-phase` | [.agent/workflows/run-phase.md](./.agent/workflows/run-phase.md) | Execute the next GSD phase plan |
+| `/new-commit` | [.agent/workflows/new-commit.md](./.agent/workflows/new-commit.md) | Create an atomic commit |
+| `/verify-phase` | [.agent/workflows/verify-phase.md](./.agent/workflows/verify-phase.md) | Check phase Definition of Done |
+
+### Global Skills (Installed at `~/.gemini/antigravity/skills/`)
+| Skill | Trigger phrase |
+|-------|---------------|
+| `ui-ux-pro-max` | *"Using the ui-ux-pro-max skill, design..."* |
+| `code-review` | *"Review this with the code-review skill"* |
+| `documentation-writer` | *"Write docs using the documentation-writer skill"* |
+| `unit-test-generator` | *"Generate tests using the unit-test-generator skill"* |
+
+---
+
 ## 📁 Required Reading (Before Any Task)
 
 Always check these files before starting work. They are your ground truth.
@@ -25,7 +46,6 @@ Always check these files before starting work. They are your ground truth.
 | [PRD.md](./PRD.md) | Before building any feature |
 | [MVC.md](./MVC.md) | When scoping what is in vs. out of v1 |
 | [TECHSTACK.md](./TECHSTACK.md) | Before creating any file, importing any library, or making an architecture decision |
-| [GSD_PROMPT.md](./GSD_PROMPT.md) | When restarting or re-initializing the GSD execution loop |
 
 If any of these files conflict, the priority order is:
 **PROJECT_PLAN.md > PRD.md > MVC.md > TECHSTACK.md**
