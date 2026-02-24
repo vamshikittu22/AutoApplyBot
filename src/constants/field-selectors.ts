@@ -5,9 +5,17 @@
  */
 export const FIELD_KEYWORDS: Record<string, string[]> = {
   // Personal info (nested under Profile.personal)
-  'personal.name': ['full name', 'name', 'legal name'],
-  'personal.email': ['email', 'e-mail', 'email address', 'contact email'],
-  'personal.phone': ['phone', 'telephone', 'mobile', 'cell', 'phone number', 'contact number'],
+  'personal.name': ['full name', 'name', 'legal name', 'your name'],
+  'personal.email': ['email', 'e-mail', 'email address', 'contact email', 'your email', 'mail'],
+  'personal.phone': [
+    'phone',
+    'telephone',
+    'mobile',
+    'cell',
+    'phone number',
+    'contact number',
+    'your phone',
+  ],
   'personal.location': ['location', 'city', 'address', 'where are you based', 'current location'],
   'personal.workAuthorization': [
     'work authorization',
@@ -24,8 +32,22 @@ export const FIELD_KEYWORDS: Record<string, string[]> = {
   'links.personalSite': ['website', 'personal site', 'personal website', 'blog'],
 
   // Work history (nested under Profile.workHistory[])
-  'workHistory.position': ['current title', 'job title', 'current position', 'position', 'role'],
-  'workHistory.company': ['current company', 'employer', 'current employer', 'organization'],
+  'workHistory.position': [
+    'current title',
+    'job title',
+    'current position',
+    'position',
+    'role',
+    'title',
+    'current job title',
+  ],
+  'workHistory.company': [
+    'current company',
+    'employer',
+    'current employer',
+    'organization',
+    'company',
+  ],
   'workHistory.startDate': ['start date', 'from', 'began'],
   'workHistory.endDate': ['end date', 'to', 'ended', 'until'],
 
@@ -37,7 +59,14 @@ export const FIELD_KEYWORDS: Record<string, string[]> = {
   'education.gpa': ['gpa', 'grade point average', 'grades'],
 
   // Skills (nested under Profile.skills[])
-  skills: ['skills', 'technical skills', 'competencies', 'technologies', 'expertise'],
+  skills: [
+    'skills',
+    'technical skills',
+    'competencies',
+    'technologies',
+    'expertise',
+    'your skills',
+  ],
 
   // Domain extras (nested under Profile.domainExtras)
   'domainExtras.techStack': ['tech stack', 'technologies', 'frameworks', 'tools'],

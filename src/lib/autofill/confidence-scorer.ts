@@ -76,7 +76,7 @@ export function fuzzyMatch(
   // Create Fuse instance for fuzzy searching
   const fuse = new Fuse(keywords, {
     includeScore: true,
-    threshold: 0.4, // 0 = exact match, 1 = match anything
+    threshold: 0.5, // 0 = exact match, 1 = match anything (more permissive)
     distance: 100,
     minMatchCharLength: 2,
   });
