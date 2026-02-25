@@ -113,6 +113,7 @@ Plans:
 
 ### Phase 3: AI Answer Generation
 **Timeline:** Week 5
+**Status:** Ready for execution (plans created)
 **Goal:** Mock AI system with option for user to add real API key
 **Requirements Covered:** REQ-AI-01 through REQ-AI-05
 
@@ -123,7 +124,14 @@ Plans:
 - REQ-AI-04: Placeholder markers in drafts
 - REQ-AI-05: Essay question handling (STAR outline)
 
-**Plans:** [To be planned]
+**Plans:** 5 plans in 3 waves (~200 minutes)
+
+Plans:
+- [ ] 03-01-PLAN.md — AI Provider Infrastructure (Wave 1, 30 min)
+- [ ] 03-02-PLAN.md — Mock AI Provider & Prompt Builder (Wave 2, 45 min)
+- [ ] 03-03-PLAN.md — Real AI Providers (OpenAI + Anthropic) (Wave 2, 40 min)
+- [ ] 03-04-PLAN.md — Question Detection & Suggest Button UI (Wave 3, 50 min)
+- [ ] 03-05-PLAN.md — API Key Configuration & Settings UI (Wave 3, 35 min)
 
 **Definition of Done:**
 - [ ] "Suggest Answer" button appears on text questions
