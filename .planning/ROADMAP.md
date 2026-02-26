@@ -127,9 +127,9 @@ Plans:
 **Plans:** 5 plans in 3 waves (~200 minutes)
 
 Plans:
-- [ ] 03-01-PLAN.md — AI Provider Infrastructure (Wave 1, 30 min)
-- [ ] 03-02-PLAN.md — Mock AI Provider & Prompt Builder (Wave 2, 45 min)
-- [ ] 03-03-PLAN.md — Real AI Providers (OpenAI + Anthropic) (Wave 2, 40 min)
+- [x] 03-01-PLAN.md — AI Provider Infrastructure (Wave 1, 7 min)
+- [x] 03-02-PLAN.md — Mock AI Provider & Prompt Builder (Wave 2, 6 min)
+- [x] 03-03-PLAN.md — Real AI Providers (OpenAI + Anthropic) (Wave 2, 9 min)
 - [ ] 03-04-PLAN.md — Question Detection & Suggest Button UI (Wave 3, 50 min)
 - [ ] 03-05-PLAN.md — API Key Configuration & Settings UI (Wave 3, 35 min)
 
