@@ -8,6 +8,7 @@ import {
   hasValidKey,
   getActiveProvider,
 } from './config';
+import { encryptData } from '@/lib/storage/encryption';
 
 // Mock Chrome Storage API
 const mockStorage: Record<string, any> = {};
@@ -49,9 +50,10 @@ describe('AI Configuration', () => {
     });
 
     it('should return stored config when exists', async () => {
+      const encryptedKey = await encryptData('test-key');
       const storedConfig = {
         provider: 'openai' as const,
-        openaiKey: 'test-key',
+        openaiKey: encryptedKey,
         openaiValidatedAt: Date.now(),
         lastUsedProvider: 'openai' as const,
       };
@@ -60,7 +62,7 @@ describe('AI Configuration', () => {
       const config = await getAIConfig();
 
       expect(config.provider).toBe('openai');
-      expect(config.openaiKey).toBe('test-key');
+      expect(config.openaiKey).toBe(encryptedKey);
     });
 
     it('should save default config on first load', async () => {
@@ -99,13 +101,35 @@ describe('AI Configuration', () => {
   });
 
   describe('saveAPIKey', () => {
+    it('should store API key in encrypted format', async () => {
+      const validatedAt = Date.now();
+      const plainKey = 'sk-test-key-plain';
+
+      await saveAPIKey('openai', plainKey, validatedAt);
+
+      const config = mockStorage.ai_config;
+
+      // Stored key should NOT be plain text
+      expect(config.openaiKey).not.toBe(plainKey);
+
+      // Stored key should match encryption format (base64:base64)
+      expect(config.openaiKey).toMatch(/^[A-Za-z0-9+/]+=*:[A-Za-z0-9+/]+=*$/);
+
+      // Should contain colon separator
+      expect(config.openaiKey).toContain(':');
+
+      // Validation timestamp should be saved
+      expect(config.openaiValidatedAt).toBe(validatedAt);
+    });
+
     it('should save OpenAI key with validation timestamp', async () => {
       const validatedAt = Date.now();
 
       await saveAPIKey('openai', 'sk-test-key', validatedAt);
 
       const config = mockStorage.ai_config;
-      expect(config.openaiKey).toBe('sk-test-key');
+      expect(config.openaiKey).toBeDefined();
+      expect(config.openaiKey).toMatch(/^[A-Za-z0-9+/]+=*:[A-Za-z0-9+/]+=*$/);
       expect(config.openaiValidatedAt).toBe(validatedAt);
     });
 
@@ -115,36 +139,43 @@ describe('AI Configuration', () => {
       await saveAPIKey('anthropic', 'sk-ant-test-key', validatedAt);
 
       const config = mockStorage.ai_config;
-      expect(config.anthropicKey).toBe('sk-ant-test-key');
+      expect(config.anthropicKey).toBeDefined();
+      expect(config.anthropicKey).toMatch(/^[A-Za-z0-9+/]+=*:[A-Za-z0-9+/]+=*$/);
       expect(config.anthropicValidatedAt).toBe(validatedAt);
     });
 
     it('should preserve other provider keys when saving', async () => {
       const validatedAt = Date.now();
+      const existingEncrypted = await encryptData('existing-anthropic-key');
+
       mockStorage.ai_config = {
         provider: 'mock',
-        anthropicKey: 'existing-anthropic-key',
+        anthropicKey: existingEncrypted,
         anthropicValidatedAt: 12345,
       };
 
       await saveAPIKey('openai', 'sk-test-key', validatedAt);
 
       const config = mockStorage.ai_config;
-      expect(config.openaiKey).toBe('sk-test-key');
-      expect(config.anthropicKey).toBe('existing-anthropic-key');
+      expect(config.openaiKey).toBeDefined();
+      expect(config.openaiKey).toMatch(/^[A-Za-z0-9+/]+=*:[A-Za-z0-9+/]+=*$/);
+      expect(config.anthropicKey).toBe(existingEncrypted);
     });
   });
 
   describe('getAPIKey', () => {
-    it('should return OpenAI key when exists', async () => {
+    it('should return decrypted OpenAI key when exists', async () => {
+      const plainKey = 'sk-test-key-plain';
+      const encryptedKey = await encryptData(plainKey);
+
       mockStorage.ai_config = {
         provider: 'openai',
-        openaiKey: 'sk-test-key',
+        openaiKey: encryptedKey,
       };
 
       const key = await getAPIKey('openai');
 
-      expect(key).toBe('sk-test-key');
+      expect(key).toBe(plainKey);
     });
 
     it('should return null when OpenAI key does not exist', async () => {
@@ -157,15 +188,40 @@ describe('AI Configuration', () => {
       expect(key).toBeNull();
     });
 
-    it('should return Anthropic key when exists', async () => {
+    it('should return decrypted Anthropic key when exists', async () => {
+      const plainKey = 'sk-ant-test-key-plain';
+      const encryptedKey = await encryptData(plainKey);
+
       mockStorage.ai_config = {
         provider: 'anthropic',
-        anthropicKey: 'sk-ant-test-key',
+        anthropicKey: encryptedKey,
       };
 
       const key = await getAPIKey('anthropic');
 
-      expect(key).toBe('sk-ant-test-key');
+      expect(key).toBe(plainKey);
+    });
+
+    it('should return null for corrupted encrypted data', async () => {
+      mockStorage.ai_config = {
+        provider: 'openai',
+        openaiKey: 'corrupted-not-valid-format',
+      };
+
+      const key = await getAPIKey('openai');
+
+      expect(key).toBeNull();
+    });
+
+    it('should handle decryption failure gracefully', async () => {
+      mockStorage.ai_config = {
+        provider: 'anthropic',
+        anthropicKey: 'invalid:base64:format',
+      };
+
+      const key = await getAPIKey('anthropic');
+
+      expect(key).toBeNull();
     });
   });
 
@@ -274,6 +330,64 @@ describe('AI Configuration', () => {
       const provider = await getActiveProvider();
 
       expect(provider).toBe('mock');
+    });
+  });
+
+  describe('Round-trip encryption', () => {
+    it('should encrypt on save and decrypt on get for OpenAI', async () => {
+      const originalKey = 'sk-proj-abc123def456ghi789';
+      const validatedAt = Date.now();
+
+      await saveAPIKey('openai', originalKey, validatedAt);
+      const retrievedKey = await getAPIKey('openai');
+
+      expect(retrievedKey).toBe(originalKey);
+    });
+
+    it('should encrypt on save and decrypt on get for Anthropic', async () => {
+      const originalKey = 'sk-ant-api03-xyz789abc123';
+      const validatedAt = Date.now();
+
+      await saveAPIKey('anthropic', originalKey, validatedAt);
+      const retrievedKey = await getAPIKey('anthropic');
+
+      expect(retrievedKey).toBe(originalKey);
+    });
+  });
+
+  describe('Migration scenario', () => {
+    it('should return null for old plain-text keys (migration)', async () => {
+      // Simulate old storage format (plain text, no encryption)
+      mockStorage.ai_config = {
+        provider: 'openai',
+        openaiKey: 'sk-old-plain-text-key',
+        openaiValidatedAt: Date.now(),
+      };
+
+      // getAPIKey should fail to decrypt plain text and return null
+      const key = await getAPIKey('openai');
+
+      expect(key).toBeNull();
+    });
+
+    it('should accept new encrypted key after migration', async () => {
+      // User had old plain-text key (returns null)
+      mockStorage.ai_config = {
+        provider: 'openai',
+        openaiKey: 'sk-old-plain-text-key',
+        openaiValidatedAt: Date.now(),
+      };
+
+      const oldKey = await getAPIKey('openai');
+      expect(oldKey).toBeNull();
+
+      // User re-enters key (saves as encrypted)
+      const newKey = 'sk-new-encrypted-key';
+      await saveAPIKey('openai', newKey, Date.now());
+
+      // Should now work correctly
+      const retrievedKey = await getAPIKey('openai');
+      expect(retrievedKey).toBe(newKey);
     });
   });
 });
