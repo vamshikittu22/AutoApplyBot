@@ -8,9 +8,9 @@
 
 **Last Updated:** 2026-02-26
 **Current Phase:** Phase 3 (AI Answer Generation)
-**Current Plan:** 01 of 05 complete
-**Phase Status:** In Progress (1/5 plans done)
-**Overall Progress:** Phase 3: 20% complete (1/5 plans done)
+**Current Plan:** 02 of 05 complete
+**Phase Status:** In Progress (2/5 plans done)
+**Overall Progress:** Phase 3: 40% complete (2/5 plans done)
 
 ---
 
@@ -344,9 +344,46 @@
 
 ---
 
+### 2026-02-26: Plan 03-01 Execution Decisions
+
+**Decision:** Chrome Storage for AI API keys (no encryption in v1)
+**Rationale:** Aligns with STATE.md decision to defer encryption to v2, simplifies implementation while Chrome Storage remains sandboxed per-extension
+**Impact:** API keys stored as plain text in chrome.storage.local (acceptable for v1)
+**Status:** LOCKED
+
+---
+
+**Decision:** Factory pattern with dynamic imports for providers
+**Rationale:** Avoid circular dependencies between config.ts and provider implementations; lazy-load providers only when needed
+**Impact:** Cleaner module graph, smaller initial bundle size
+**Status:** LOCKED
+
+---
+
+**Decision:** BaseAIProvider abstract class with shared helpers
+**Rationale:** Reduce code duplication for role context, tone instructions, and draft validation across all providers
+**Impact:** MockProvider, OpenAIProvider, AnthropicProvider all extend BaseAIProvider
+**Status:** LOCKED
+
+---
+
+**Decision:** Explicit re-exports in types/index.ts to resolve DetectedField conflict
+**Rationale:** Both ats.ts and autofill.ts export DetectedField interface with different definitions, causing TypeScript ambiguity
+**Impact:** Export ats.ts types individually (excluding DetectedField), use autofill.ts version as default
+**Status:** LOCKED
+
+---
+
+**Decision:** Install OpenAI and Anthropic SDKs in v1 (not deferred)
+**Rationale:** Plan specified immediate installation; enables real AI provider implementation
+**Impact:** Added openai@6.25.0 and @anthropic-ai/sdk@0.78.0 to dependencies
+**Status:** LOCKED
+
+---
+
 ## Active Blockers
 
-*No blockers - Phase 2 complete (6/6 plans done). Ready for Phase 3: AI Answer Generation.*
+*No blockers - Phase 3 Plan 01 complete. Ready for Plan 03-02: Mock Provider.*
 
 ---
 
@@ -390,7 +427,7 @@
 | 02-04 | 6 min | 4 | 4 | 2026-02-24 |
 | 02-05 | 4 min | 6 | 6 | 2026-02-24 |
 | 02-06 | 7 min | 6 | 6 | 2026-02-24 |
-| 03-05 | 8 min | 6 | 8 | 2026-02-26 |
+| 03-01 | 8 min | 8 | 7 | 2026-02-26 |
 
 ## Deferred to v2
 
