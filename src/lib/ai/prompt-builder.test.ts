@@ -21,7 +21,7 @@ describe('PromptBuilder', () => {
         essayMode: false,
       });
 
-      expect(prompt).toContain('polished');
+      expect(prompt).toContain('Polished'); // Capitalized in "Neutral + Polished"
       expect(prompt).toContain('diplomatic');
     });
 
