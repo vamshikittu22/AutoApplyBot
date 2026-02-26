@@ -21,7 +21,7 @@
 | Phase 0: Foundation & Setup | Complete | 2026-02-20 | 2026-02-20 | 100% (4/4 plans) |
 | Phase 1: Profile & Resume | Complete | 2026-02-21 | 2026-02-21 | 100% (4/4 plans) |
 | Phase 2: ATS Detection & Autofill | Complete | 2026-02-24 | 2026-02-24 | 100% (6/6 plans) |
-| Phase 3: AI Answer Generation | In Progress | 2026-02-26 | - | 20% (1/5 plans) |
+| Phase 3: AI Answer Generation | In Progress | 2026-02-26 | - | 40% (2/5 plans) |
 | Phase 4: Job Tracker & Safety | Not Started | - | - | 0% |
 | Phase 5: Polish & Launch Prep | Not Started | - | - | 0% |
 | Phase 6: Beta Testing & Launch | Not Started | - | - | 0% |
@@ -381,6 +381,36 @@
 
 ---
 
+### 2026-02-26: Plan 03-02 Execution Decisions
+
+**Decision:** Template-based mock provider with simulated delay
+**Rationale:** Enables development without API keys, provides fallback when users don't configure real AI
+**Impact:** MockProvider generates believably varied responses using templates, 300-600ms delay for realism
+**Status:** LOCKED
+
+---
+
+**Decision:** STAR framework for essay mode (character limit ≥500)
+**Rationale:** Industry-standard behavioral interview format, structured outline approach
+**Impact:** Essay mode generates STAR outline (not full essay), user fills in specific details via placeholders
+**Status:** LOCKED
+
+---
+
+**Decision:** Six role types with customized vocabulary
+**Rationale:** Different industries use different terminology (tech vs healthcare vs finance vs marketing vs operations)
+**Impact:** Templates include role-specific placeholders and hints for more authentic feel
+**Status:** LOCKED
+
+---
+
+**Decision:** Three tone variants (professional, concise, story-driven)
+**Rationale:** Different application contexts require different writing styles
+**Impact:** PromptBuilder generates different emphasis instructions per tone, templates vary structure
+**Status:** LOCKED
+
+---
+
 ## Active Blockers
 
 *No blockers - Phase 3 Plan 01 complete. Ready for Plan 03-02: Mock Provider.*
@@ -428,6 +458,7 @@
 | 02-05 | 4 min | 6 | 6 | 2026-02-24 |
 | 02-06 | 7 min | 6 | 6 | 2026-02-24 |
 | 03-01 | 8 min | 8 | 7 | 2026-02-26 |
+| 03-02 | 9 min | 6 | 6 | 2026-02-26 |
 
 ## Deferred to v2
 
