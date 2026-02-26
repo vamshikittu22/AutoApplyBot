@@ -1,9 +1,10 @@
 /**
  * AI Configuration Management
- * Handles AI provider selection, API key storage, and validation
+ * Handles AI provider selection, API key storage (encrypted), and validation
  */
 
 import type { AIConfig, AIProvider, IAIProvider } from '@/types/ai';
+import { encryptData, decryptData } from '@/lib/storage/encryption';
 
 const STORAGE_KEY = 'ai_config';
 
@@ -39,6 +40,7 @@ export async function setAIProvider(provider: AIProvider): Promise<void> {
 
 /**
  * Save API key for a provider with validation timestamp
+ * Keys are encrypted before storage using AES-256-GCM
  */
 export async function saveAPIKey(
   provider: 'openai' | 'anthropic',
@@ -47,11 +49,14 @@ export async function saveAPIKey(
 ): Promise<void> {
   const config = await getAIConfig();
 
+  // Encrypt API key before storing (REQ-AI-02)
+  const encryptedKey = await encryptData(apiKey);
+
   if (provider === 'openai') {
-    config.openaiKey = apiKey;
+    config.openaiKey = encryptedKey;
     config.openaiValidatedAt = validatedAt;
   } else {
-    config.anthropicKey = apiKey;
+    config.anthropicKey = encryptedKey;
     config.anthropicValidatedAt = validatedAt;
   }
 
@@ -83,11 +88,26 @@ export async function clearAPIKey(provider: 'openai' | 'anthropic'): Promise<voi
 
 /**
  * Get stored API key for a provider
- * Returns null if no key exists
+ * Automatically decrypts keys from storage
+ * Returns null if no key exists or decryption fails
+ *
+ * Note: Plain-text keys from pre-encryption versions will fail decryption
+ * and return null (user must re-enter key - acceptable migration path for v1)
  */
 export async function getAPIKey(provider: 'openai' | 'anthropic'): Promise<string | null> {
   const config = await getAIConfig();
-  return provider === 'openai' ? config.openaiKey || null : config.anthropicKey || null;
+  const encryptedKey = provider === 'openai' ? config.openaiKey : config.anthropicKey;
+
+  if (!encryptedKey) return null;
+
+  try {
+    // Decrypt API key from storage (REQ-AI-02)
+    return await decryptData(encryptedKey);
+  } catch (error) {
+    // If decryption fails (corrupted data, old plain-text format), treat as no key
+    console.error(`Failed to decrypt ${provider} API key:`, error);
+    return null;
+  }
 }
 
 /**
