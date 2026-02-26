@@ -112,6 +112,45 @@ export async function getActiveProvider(): Promise<AIProvider> {
 }
 
 /**
+ * Get the appropriate AI provider instance based on current configuration
+ * Falls back to mock if selected provider has no API key
+ */
+export async function getAIProvider(): Promise<IAIProvider> {
+  const config = await getAIConfig();
+
+  switch (config.provider) {
+    case 'openai': {
+      const apiKey = await getAPIKey('openai');
+      if (!apiKey) {
+        // Fall back to mock if no key
+        console.warn('OpenAI provider selected but no API key found. Falling back to mock.');
+        const { MockProvider } = await import('./providers/mock');
+        return new MockProvider();
+      }
+      const { OpenAIProvider } = await import('./providers/openai');
+      return new OpenAIProvider(apiKey);
+    }
+
+    case 'anthropic': {
+      const apiKey = await getAPIKey('anthropic');
+      if (!apiKey) {
+        console.warn('Anthropic provider selected but no API key found. Falling back to mock.');
+        const { MockProvider } = await import('./providers/mock');
+        return new MockProvider();
+      }
+      const { AnthropicProvider } = await import('./providers/anthropic');
+      return new AnthropicProvider(apiKey);
+    }
+
+    case 'mock':
+    default: {
+      const { MockProvider } = await import('./providers/mock');
+      return new MockProvider();
+    }
+  }
+}
+
+/**
  * Create a provider instance for validation purposes
  * Used during key validation to test if the key works
  */
@@ -127,8 +166,8 @@ export async function createProviderForValidation(
     const { AnthropicProvider } = await import('./providers/anthropic');
     return new AnthropicProvider(apiKey);
   } else {
-    const { MockAIProvider } = await import('./providers/mock');
-    return new MockAIProvider();
+    const { MockProvider } = await import('./providers/mock');
+    return new MockProvider();
   }
 }
 
