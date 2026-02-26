@@ -124,14 +124,16 @@ Plans:
 - REQ-AI-04: Placeholder markers in drafts
 - REQ-AI-05: Essay question handling (STAR outline)
 
-**Plans:** 5 plans in 3 waves (~200 minutes)
+**Plans:** 7 plans in 3 waves (~200 minutes + gap closure)
 
 Plans:
 - [x] 03-01-PLAN.md — AI Provider Infrastructure (Wave 1, 7 min)
 - [x] 03-02-PLAN.md — Mock AI Provider & Prompt Builder (Wave 2, 6 min)
 - [x] 03-03-PLAN.md — Real AI Providers (OpenAI + Anthropic) (Wave 2, 9 min)
-- [ ] 03-04-PLAN.md — Question Detection & Suggest Button UI (Wave 3, 50 min)
-- [ ] 03-05-PLAN.md — API Key Configuration & Settings UI (Wave 3, 35 min)
+- [x] 03-04-PLAN.md — Question Detection & Suggest Button UI (Wave 3, 50 min)
+- [x] 03-05-PLAN.md — API Key Configuration & Settings UI (Wave 3, 35 min)
+- [ ] 03-06-PLAN.md — API Key Encryption (Gap Closure, Wave 1, ~20 min)
+- [ ] 03-07-PLAN.md — Fix Failing Test (Gap Closure, Wave 1, ~5 min)
 
 **Definition of Done:**
 - [ ] "Suggest Answer" button appears on text questions
