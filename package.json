@@ -23,7 +23,9 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "fuse.js": "^7.1.0",
+    "openai": "^6.25.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^5.0.11"
