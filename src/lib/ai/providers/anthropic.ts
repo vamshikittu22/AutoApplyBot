@@ -13,6 +13,7 @@ export class AnthropicProvider extends BaseAIProvider {
     super();
     this.client = new Anthropic({
       apiKey,
+      dangerouslyAllowBrowser: true, // Required for Chrome extension context
     });
   }
 
@@ -69,7 +70,10 @@ export class AnthropicProvider extends BaseAIProvider {
 
   async validateKey(apiKey: string): Promise<boolean> {
     try {
-      const testClient = new Anthropic({ apiKey });
+      const testClient = new Anthropic({
+        apiKey,
+        dangerouslyAllowBrowser: true,
+      });
 
       // Lightweight validation: minimal message request
       await testClient.messages.create({
