@@ -411,9 +411,39 @@
 
 ---
 
+### 2026-02-26: Plan 03-06 Execution Decisions
+
+**Decision:** Use AES-256-GCM for API key encryption (not AES-CBC)
+**Rationale:** GCM provides authenticated encryption (detects tampering), prevents both decryption and modification attacks
+**Impact:** API keys stored with authentication tag, decryption fails if data corrupted or tampered
+**Status:** LOCKED
+
+---
+
+**Decision:** PBKDF2 with 100k iterations for key derivation
+**Rationale:** OWASP recommendation for password-based key derivation, balances security and performance
+**Impact:** ~15ms overhead per encryption/decryption (negligible for infrequent API key operations)
+**Status:** LOCKED
+
+---
+
+**Decision:** Static salt/passphrase acceptable for Chrome extension sandboxing
+**Rationale:** Chrome extensions sandboxed per-extension, no cross-extension access; real security benefit is preventing accidental key exposure in logs/exports/debugging
+**Impact:** Simplified implementation, adequate security for v1 threat model (local device compromise)
+**Status:** LOCKED
+
+---
+
+**Decision:** Migration path for old plain-text keys: return null, user re-enters
+**Rationale:** Simpler than migration logic, acceptable for v1 (no data loss, just re-validation)
+**Impact:** Users who saved keys before encryption must re-enter once (one-time migration)
+**Status:** LOCKED
+
+---
+
 ## Active Blockers
 
-*No blockers - Phase 3 Plan 01 complete. Ready for Plan 03-02: Mock Provider.*
+*No blockers - Phase 3 complete (7/7 plans done). Ready for Phase 4.*
 
 ---
 
@@ -461,6 +491,8 @@
 | 03-02 | 9 min | 6 | 6 | 2026-02-26 |
 | 03-03 | 7 min | 6 | 5 | 2026-02-26 |
 | 03-04 | 52 min | 7 | 6 | 2026-02-26 |
+| 03-05 | 8 min | 5 | 6 | 2026-02-26 |
+| 03-06 | 6 min | 4 | 4 | 2026-02-26 |
 | 03-07 | 1 min | 1 | 1 | 2026-02-26 |
 
 ## Deferred to v2
