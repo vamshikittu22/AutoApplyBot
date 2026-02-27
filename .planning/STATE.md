@@ -8,9 +8,9 @@
 
 **Last Updated:** 2026-02-27
 **Current Phase:** Phase 4 (Job Tracker & Safety)
-**Current Plan:** 03 of 04 complete
-**Phase Status:** In Progress (3/4 plans done)
-**Overall Progress:** Phase 4: 75% complete (3/4 plans done)
+**Current Plan:** 04 of 04 complete
+**Phase Status:** Complete (4/4 plans done)
+**Overall Progress:** Phase 4: 100% complete (4/4 plans done)
 
 ---
 
@@ -22,7 +22,7 @@
 | Phase 1: Profile & Resume | Complete | 2026-02-21 | 2026-02-21 | 100% (4/4 plans) |
 | Phase 2: ATS Detection & Autofill | Complete | 2026-02-24 | 2026-02-24 | 100% (6/6 plans) |
 | Phase 3: AI Answer Generation | Complete | 2026-02-26 | 2026-02-26 | 100% (7/7 plans) |
-| Phase 4: Job Tracker & Safety | In Progress | 2026-02-27 | - | 75% (3/4 plans) |
+| Phase 4: Job Tracker & Safety | Complete | 2026-02-27 | 2026-02-27 | 100% (4/4 plans) |
 | Phase 5: Polish & Launch Prep | Not Started | - | - | 0% |
 | Phase 6: Beta Testing & Launch | Not Started | - | - | 0% |
 
@@ -437,6 +437,36 @@
 **Decision:** Migration path for old plain-text keys: return null, user re-enters
 **Rationale:** Simpler than migration logic, acceptable for v1 (no data loss, just re-validation)
 **Impact:** Users who saved keys before encryption must re-enter once (one-time migration)
+**Status:** LOCKED
+
+---
+
+### 2026-02-27: Plan 04-05 Execution Decisions
+
+**Decision:** Per-job disable is permanent until user re-enables
+**Rationale:** Simplest UX, avoids accidental re-enabling - user explicitly toggles back on when ready
+**Impact:** Disabled jobs remain disabled across sessions until user action
+**Status:** LOCKED
+
+---
+
+**Decision:** Volume warning dismissal persists for calendar day only
+**Rationale:** Allows daily gentle reminder without being intrusive; resets at midnight for new day
+**Impact:** Warning can be dismissed but will show again next day if threshold still exceeded
+**Status:** LOCKED
+
+---
+
+**Decision:** Chrome runtime messaging for real-time disable/enable sync
+**Rationale:** Popup sends JOB_DISABLED/JOB_ENABLED messages to content scripts for immediate UI updates without page reload
+**Impact:** Content scripts listen for messages and cleanup/re-initialize features dynamically
+**Status:** LOCKED
+
+---
+
+**Decision:** URL normalization for consistent disable list matching
+**Rationale:** Job posting URLs often have query params (utm_source, etc.) that should be ignored for consistent matching
+**Impact:** All disable checks use normalizeUrl() to strip query params and ensure URL consistency
 **Status:** LOCKED
 
 ---
@@ -885,6 +915,33 @@
 - Created 04-03-SUMMARY.md with self-check verification
 - Status: Plan 03 complete (4 min), Phase 4 now 75% complete (3/4 plans done)
 - Ready for Plan 04-04: Tracker UI in extension popup
+
+### 2026-02-27: Phase 4 Plan 04 Execution
+- Executed 04-04-PLAN.md (Tracker list UI with filters and status management)
+- Built TrackerList component with Material Design card layout
+- Implemented TrackerFilters with status dropdown and date range picker
+- Added status management (Applied → Reviewing → Interview → Offer → Rejected → Withdrawn)
+- Created in-place status dropdown with color-coded badges
+- Integrated with existing App.tsx using tabbed navigation (Profile, AI Settings, Tracker)
+- Added bulk clear and stats summary (total apps, today's count)
+- Proper type safety and error handling for storage operations
+- 3 atomic commits: feat (3d34d54, bf89dd8, 83cee8b)
+- Created 04-04-SUMMARY.md with self-check verification
+- Status: Plan 04 complete (7 min), Phase 4 now 100% complete (4/4 plans done - PHASE COMPLETE)
+
+### 2026-02-27: Phase 4 Plan 05 Execution
+- Executed 04-05-PLAN.md (Volume warning and per-job disable controls)
+- Created per-job disable list manager with Chrome Storage (isJobDisabled, disableJob, enableJob, getDisabledJobs)
+- Built dismissible volume warning banner (15+ apps/day threshold, calendar day persistence)
+- Implemented site disable toggle with real-time Chrome runtime messaging
+- Integrated safety controls into autofill button and AI suggest content scripts
+- Content scripts check disable status before initialization and listen for JOB_DISABLED/JOB_ENABLED messages
+- URL normalization via normalizeUrl() for consistent matching
+- Comprehensive unit tests: 20 tests for disable list, all passing
+- 4 atomic commits: feat (17fde00, 60fd9f5, a6e61a5, 83a3cc2)
+- Created 04-05-SUMMARY.md with self-check verification
+- Status: Plan 05 complete (8 min), Phase 4 fully complete (4/4 plans done)
+- **Phase 4 complete** - All job tracker and safety features implemented
 
 ---
 
