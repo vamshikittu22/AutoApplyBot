@@ -1,13 +1,6 @@
 /**
- * ApplicationCard component
- *
- * Displays individual application with:
- * - Compact layout optimized for 400px popup width
- * - Inline status editing (dropdown)
- * - Delete button with confirmation
- * - Status-specific colors (Applied/Interview/Offer/Rejected/Withdrawn)
- * - ATS platform badge
- * - Relative date display
+ * ApplicationCard component — redesigned with Plus Jakarta Sans design system
+ * Primary: #0369A1 | Minimalism & Swiss Style
  */
 
 import React from 'react';
@@ -19,37 +12,14 @@ interface ApplicationCardProps {
   onDelete: (id: string) => void;
 }
 
-// Status color mapping
-const STATUS_COLORS: Record<ApplicationStatus, { bg: string; text: string; badge: string }> = {
-  applied: { bg: 'bg-blue-50', text: 'text-blue-700', badge: 'bg-blue-100' },
-  interview: { bg: 'bg-yellow-50', text: 'text-yellow-700', badge: 'bg-yellow-100' },
-  offer: { bg: 'bg-green-50', text: 'text-green-700', badge: 'bg-green-100' },
-  rejected: { bg: 'bg-red-50', text: 'text-red-700', badge: 'bg-red-100' },
-  withdrawn: { bg: 'bg-gray-50', text: 'text-gray-700', badge: 'bg-gray-100' },
-};
-
-// ATS platform badge colors
-const PLATFORM_COLORS: Record<string, string> = {
-  workday: 'bg-purple-100 text-purple-700',
-  greenhouse: 'bg-green-100 text-green-700',
-  lever: 'bg-blue-100 text-blue-700',
-  unknown: 'bg-gray-100 text-gray-600',
-};
-
-/**
- * Format date as relative ("2 days ago") or absolute ("Mar 1, 2026")
- */
 function formatDate(isoDate: string): string {
   const date = new Date(isoDate);
   const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
+  const diffDays = Math.floor((now.getTime() - date.getTime()) / 86_400_000);
   if (diffDays === 0) return 'Today';
   if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays} days ago`;
-
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 export function ApplicationCard({
@@ -57,43 +27,62 @@ export function ApplicationCard({
   onStatusChange,
   onDelete,
 }: ApplicationCardProps): React.ReactElement {
-  const statusColors = STATUS_COLORS[application.status];
-  const platformColor = PLATFORM_COLORS[application.atsType] || PLATFORM_COLORS.unknown;
-
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onStatusChange(application.id, e.target.value as ApplicationStatus);
+  // Inline badge colors — guaranteed to work in extension context
+  const statusStyle: Record<ApplicationStatus, React.CSSProperties> = {
+    applied:   { background: '#DBEAFE', color: '#1E40AF' },
+    interview: { background: '#FEF9C3', color: '#854D0E' },
+    offer:     { background: '#DCFCE7', color: '#166534' },
+    rejected:  { background: '#FEE2E2', color: '#991B1B' },
+    withdrawn: { background: '#F1F5F9', color: '#475569' },
   };
 
-  const handleDelete = () => {
-    if (window.confirm('Delete this application?')) {
-      onDelete(application.id);
-    }
+  const platformStyle: Record<string, React.CSSProperties> = {
+    workday:    { background: '#EDE9FE', color: '#5B21B6' },
+    greenhouse: { background: '#DCFCE7', color: '#166534' },
+    lever:      { background: '#DBEAFE', color: '#1E40AF' },
+    unknown:    { background: '#F1F5F9', color: '#64748B' },
   };
+
+  const sBadge = statusStyle[application.status];
+  const pBadge = platformStyle[application.atsType] ?? platformStyle.unknown;
 
   return (
-    <div
-      className={`${statusColors.bg} border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow`}
-    >
-      {/* Job title */}
-      <h3 className="font-semibold text-gray-900 truncate mb-1">{application.jobTitle}</h3>
+    <div className="bg-white border border-brand-border rounded-xl p-3 hover:shadow-sm transition-all duration-150 animate-slide-up"
+         style={{ borderColor: '#BAE6FD' }}>
 
-      {/* Company + ATS platform badge */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm text-gray-700">{application.company}</span>
-        <span className={`text-xs px-2 py-0.5 rounded ${platformColor}`}>
+      {/* Title + delete */}
+      <div className="flex items-start justify-between gap-2 mb-1.5">
+        <h3 className="font-semibold text-brand-text text-sm leading-snug truncate flex-1">
+          {application.jobTitle}
+        </h3>
+        <button
+          onClick={() => window.confirm('Remove this application?') && onDelete(application.id)}
+          className="text-brand-subtle hover:text-red-500 hover:bg-red-50 p-1 rounded-lg transition-colors duration-150 cursor-pointer flex-shrink-0"
+          aria-label="Remove application"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Company + platform */}
+      <div className="flex items-center gap-2 mb-2.5">
+        <span className="text-brand-muted text-xs font-medium truncate">{application.company}</span>
+        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md capitalize flex-shrink-0" style={pBadge}>
           {application.atsType}
         </span>
       </div>
 
-      {/* Applied date */}
-      <p className="text-xs text-gray-600 mb-3">{formatDate(application.appliedDate)}</p>
-
-      {/* Status dropdown + Delete button */}
+      {/* Date + status */}
       <div className="flex items-center gap-2">
+        <span className="text-brand-subtle text-[11px]">{formatDate(application.appliedDate)}</span>
         <select
           value={application.status}
-          onChange={handleStatusChange}
-          className={`flex-1 text-sm ${statusColors.text} ${statusColors.badge} border-none rounded px-2 py-1 font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500`}
+          onChange={(e) => onStatusChange(application.id, e.target.value as ApplicationStatus)}
+          className="ml-auto text-[11px] font-semibold px-2 py-1 rounded-lg border-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-light"
+          style={sBadge}
+          aria-label="Application status"
         >
           <option value="applied">Applied</option>
           <option value="interview">Interview</option>
@@ -101,22 +90,6 @@ export function ApplicationCard({
           <option value="rejected">Rejected</option>
           <option value="withdrawn">Withdrawn</option>
         </select>
-
-        <button
-          onClick={handleDelete}
-          className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
-          aria-label="Delete application"
-          title="Delete application"
-        >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
-        </button>
       </div>
     </div>
   );

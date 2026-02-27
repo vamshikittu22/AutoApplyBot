@@ -1,14 +1,114 @@
+/* UI/UX Pro Max Design System — AutoApply Copilot
+ * Style: Minimalism & Swiss Style
+ * Typography: Plus Jakarta Sans (SaaS / Professional)
+ * Primary: #0369A1 | Secondary: #0EA5E9 | CTA: #22C55E
+ * Background: #F0F9FF | Text: #0C4A6E
+ */
+
+/* Tailwind directives — preflight runs here, our rules below override it */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles can go here */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+/* ── Design Tokens ─────────────────────────────────────────── */
+:root {
+  --color-primary:   #0369A1;
+  --color-primary-light: #0EA5E9;
+  --color-cta:       #22C55E;
+  --color-bg:        #F0F9FF;
+  --color-surface:   #FFFFFF;
+  --color-border:    #BAE6FD;
+  --color-text:      #0C4A6E;
+  --color-muted:     #475569;
+  --color-subtle:    #94A3B8;
+  --radius-sm:       6px;
+  --radius-md:       10px;
+  --radius-lg:       14px;
+  --transition:      150ms ease;
+}
+
+/* ── Popup sizing — must beat Tailwind preflight with !important ── */
+/* Chrome popup window sizes itself to body content. min-width/min-height
+   guarantee Chrome opens the popup at least this large. */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  min-width: 400px   !important;
+  min-height: 580px  !important;
+  width: 400px       !important;
+  height: 580px      !important;
+  margin: 0          !important;
+  padding: 0         !important;
+  overflow: hidden   !important;
+}
+
+#root {
+  width: 400px;
+  height: 580px;
+  min-width: 400px;
+  min-height: 580px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 14px;
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary-light); }
+
+/* ── Focus ring ────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
+}
+
+/* ── Micro-animations ──────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-fade-in {
+    animation: fadeIn 180ms ease both;
+  }
+  .animate-slide-up {
+    animation: slideUp 200ms ease both;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Status badge utilities ─────────────────────────────────── */
+.status-applied   { background: #DBEAFE; color: #1E40AF; }
+.status-interview { background: #FEF9C3; color: #854D0E; }
+.status-offer     { background: #DCFCE7; color: #166534; }
+.status-rejected  { background: #FEE2E2; color: #991B1B; }
+.status-withdrawn { background: #F1F5F9; color: #475569; }
+
+/* ── Platform badge utilities ───────────────────────────────── */
+.platform-workday    { background: #EDE9FE; color: #5B21B6; }
+.platform-greenhouse { background: #DCFCE7; color: #166534; }
+.platform-lever      { background: #DBEAFE; color: #1E40AF; }
+.platform-unknown    { background: #F1F5F9; color: #64748B; }
+

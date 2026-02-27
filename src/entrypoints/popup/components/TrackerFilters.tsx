@@ -1,12 +1,6 @@
 /**
- * TrackerFilters component
- *
- * Provides multi-criteria filtering and sorting controls:
- * - Status filter (All, Applied, Interview, Offer, Rejected, Withdrawn)
- * - Platform filter (All, Workday, Greenhouse, Lever, Unknown)
- * - Date range filter (Last 7 days, Last 30 days, All time)
- * - Sorting (Date/Company/Status, Asc/Desc)
- * - Clear filters button
+ * TrackerFilters — redesigned with design system
+ * Compact, clean filter row using #0369A1 palette
  */
 
 import React from 'react';
@@ -16,136 +10,90 @@ export function TrackerFilters(): React.ReactElement {
   const { filterStatus, filterPlatform, sortBy, sortOrder, setFilter, setSorting, clearFilters } =
     useTrackerStore();
 
-  // Check if any filters are active
   const hasActiveFilters = filterStatus !== null || filterPlatform !== null;
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value === '' ? null : e.target.value;
-    setFilter('status', value);
-  };
-
-  const handlePlatformChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value === '' ? null : e.target.value;
-    setFilter('platform', value);
-  };
-
-  const handleSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSorting(e.target.value as 'date' | 'company' | 'status', sortOrder);
-  };
-
-  const toggleSortOrder = () => {
-    setSorting(sortBy, sortOrder === 'asc' ? 'desc' : 'asc');
-  };
+  const selectClass =
+    'w-full text-xs font-medium text-[#0C4A6E] bg-[#F0F9FF] border border-[#BAE6FD] rounded-lg px-2 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0EA5E9] transition-colors duration-150';
 
   return (
-    <div className="bg-white border-b border-gray-200 p-3 space-y-2">
-      {/* First row: Status and Platform filters */}
-      <div className="grid grid-cols-2 gap-2">
+    <div className="bg-white border-b border-[#BAE6FD] px-3 py-2.5">
+      <div className="flex items-center gap-2">
+
         {/* Status filter */}
-        <div>
-          <label htmlFor="status-filter" className="text-xs text-gray-600 block mb-1">
-            Status
-          </label>
-          <select
-            id="status-filter"
-            value={filterStatus || ''}
-            onChange={handleStatusChange}
-            className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All</option>
-            <option value="applied">Applied</option>
-            <option value="interview">Interview</option>
-            <option value="offer">Offer</option>
-            <option value="rejected">Rejected</option>
-            <option value="withdrawn">Withdrawn</option>
-          </select>
-        </div>
+        <select
+          id="status-filter"
+          value={filterStatus ?? ''}
+          onChange={(e) => setFilter('status', e.target.value || null)}
+          className={selectClass}
+          aria-label="Filter by status"
+        >
+          <option value="">All status</option>
+          <option value="applied">Applied</option>
+          <option value="interview">Interview</option>
+          <option value="offer">Offer</option>
+          <option value="rejected">Rejected</option>
+          <option value="withdrawn">Withdrawn</option>
+        </select>
 
         {/* Platform filter */}
-        <div>
-          <label htmlFor="platform-filter" className="text-xs text-gray-600 block mb-1">
-            Platform
-          </label>
-          <select
-            id="platform-filter"
-            value={filterPlatform || ''}
-            onChange={handlePlatformChange}
-            className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All</option>
-            <option value="workday">Workday</option>
-            <option value="greenhouse">Greenhouse</option>
-            <option value="lever">Lever</option>
-            <option value="unknown">Unknown</option>
-          </select>
-        </div>
-      </div>
+        <select
+          id="platform-filter"
+          value={filterPlatform ?? ''}
+          onChange={(e) => setFilter('platform', e.target.value || null)}
+          className={selectClass}
+          aria-label="Filter by platform"
+        >
+          <option value="">All platforms</option>
+          <option value="workday">Workday</option>
+          <option value="greenhouse">Greenhouse</option>
+          <option value="lever">Lever</option>
+          <option value="unknown">Unknown</option>
+        </select>
 
-      {/* Second row: Sort controls and Clear button */}
-      <div className="flex items-end gap-2">
-        {/* Sort by */}
-        <div className="flex-1">
-          <label htmlFor="sort-by" className="text-xs text-gray-600 block mb-1">
-            Sort by
-          </label>
-          <select
-            id="sort-by"
-            value={sortBy}
-            onChange={handleSortByChange}
-            className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="date">Date</option>
-            <option value="company">Company</option>
-            <option value="status">Status</option>
-          </select>
-        </div>
+        {/* Sort + order */}
+        <select
+          id="sort-by"
+          value={sortBy}
+          onChange={(e) => setSorting(e.target.value as 'date' | 'company' | 'status', sortOrder)}
+          className={selectClass}
+          aria-label="Sort by"
+        >
+          <option value="date">Date</option>
+          <option value="company">Company</option>
+          <option value="status">Status</option>
+        </select>
 
-        {/* Sort order toggle */}
+        {/* Sort direction */}
         <button
-          onClick={toggleSortOrder}
-          className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors flex items-center gap-1"
-          title={`Sort ${sortOrder === 'asc' ? 'ascending' : 'descending'}`}
+          onClick={() => setSorting(sortBy, sortOrder === 'asc' ? 'desc' : 'asc')}
+          className="flex-shrink-0 p-1.5 text-[#475569] hover:text-[#0369A1] hover:bg-[#F0F9FF] border border-[#BAE6FD] rounded-lg transition-colors duration-150 cursor-pointer"
+          title={sortOrder === 'asc' ? 'Sort descending' : 'Sort ascending'}
+          aria-label="Toggle sort order"
         >
           {sortOrder === 'asc' ? (
-            <>
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 11l5-5m0 0l5 5m-5-5v12"
-                />
-              </svg>
-              <span className="text-xs">Asc</span>
-            </>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+            </svg>
           ) : (
-            <>
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 13l-5 5m0 0l-5-5m5 5V6"
-                />
-              </svg>
-              <span className="text-xs">Desc</span>
-            </>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21l3.75-3.75" />
+            </svg>
           )}
         </button>
 
-        {/* Clear filters button */}
-        <button
-          onClick={clearFilters}
-          disabled={!hasActiveFilters}
-          className={`px-3 py-1 text-sm rounded transition-colors ${
-            hasActiveFilters
-              ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              : 'bg-gray-50 text-gray-400 cursor-not-allowed'
-          }`}
-          title="Clear all filters"
-        >
-          Clear
-        </button>
+        {/* Clear */}
+        {hasActiveFilters && (
+          <button
+            onClick={clearFilters}
+            className="flex-shrink-0 p-1.5 text-[#94A3B8] hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-150 cursor-pointer"
+            title="Clear filters"
+            aria-label="Clear all filters"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   );

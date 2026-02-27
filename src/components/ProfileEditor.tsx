@@ -11,6 +11,7 @@ import { useProfileStore } from '@/lib/store/profile-store';
 import { WorkExperienceEditor } from './WorkExperienceEditor';
 import { EducationEditor } from './EducationEditor';
 import { SkillsEditor } from './SkillsEditor';
+import { deleteProfile } from '@/lib/storage/profile-storage';
 import type { RolePreference } from '@/types/profile';
 
 type Tab = 'resume' | 'personal' | 'work' | 'education' | 'skills' | 'role';
@@ -28,19 +29,28 @@ export function ProfileEditor() {
     updatePersonal,
     setRolePreference,
     updateDomainExtras,
+    resetProfile,
   } = useProfileStore();
 
   const [activeTab, setActiveTab] = useState<Tab>('resume');
   const [resumeText, setResumeText] = useState('');
+  const [isClearing, setIsClearing] = useState(false);
 
   const handleParseResume = async () => {
-    if (!resumeText.trim()) {
-      return;
-    }
+    if (!resumeText.trim()) return;
     await parseResume(resumeText);
-    // Switch to personal tab after successful parse
-    if (profile) {
-      setActiveTab('personal');
+    if (profile) setActiveTab('personal');
+  };
+
+  const handleClearAndReparse = async () => {
+    if (!confirm('This will delete your saved profile and let you paste a fresh resume. Continue?')) return;
+    setIsClearing(true);
+    try {
+      await deleteProfile();
+      resetProfile();
+      setResumeText('');
+    } finally {
+      setIsClearing(false);
     }
   };
 
@@ -124,10 +134,31 @@ export function ProfileEditor() {
         {/* Resume Parse Tab */}
         {activeTab === 'resume' && (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Paste Your Resume</h3>
-            <p className="text-sm text-gray-600">
-              Copy your entire resume text below. We'll automatically extract your information.
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Paste Your Resume</h3>
+                <p className="text-sm text-gray-600">
+                  Copy your entire resume text below. We'll automatically extract your information.
+                </p>
+              </div>
+              {profile && (
+                <button
+                  onClick={handleClearAndReparse}
+                  disabled={isClearing}
+                  className="px-3 py-1.5 text-sm bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 whitespace-nowrap"
+                >
+                  {isClearing ? 'Clearing…' : '🗑 Clear & Re-parse'}
+                </button>
+              )}
+            </div>
+
+            {profile && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+                ⚠️ A saved profile already exists. Pasting and parsing will <strong>overwrite</strong> all
+                current data. Use <em>Clear &amp; Re-parse</em> to wipe storage and start fresh.
+              </div>
+            )}
+
             <textarea
               value={resumeText}
               onChange={(e) => setResumeText(e.target.value)}

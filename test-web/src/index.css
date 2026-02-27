@@ -1,0 +1,92 @@
+/* AutoApply Copilot — Test Harness CSS
+ * Extends the extension design system for full-page layout
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design Tokens (same as extension) ──────────────────────── */
+:root {
+  --color-primary:       #0369A1;
+  --color-primary-light: #0EA5E9;
+  --color-cta:           #22C55E;
+  --color-bg:            #F0F9FF;
+  --color-surface:       #FFFFFF;
+  --color-border:        #BAE6FD;
+  --color-text:          #0C4A6E;
+  --color-muted:         #475569;
+  --color-subtle:        #94A3B8;
+  --radius-sm:           6px;
+  --radius-md:           10px;
+  --radius-lg:           14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary-light); }
+
+/* ── Focus ──────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
+}
+
+/* ── Status badges ──────────────────────────────────────────── */
+.status-applied   { background: #DBEAFE; color: #1E40AF; }
+.status-interview { background: #FEF9C3; color: #854D0E; }
+.status-offer     { background: #DCFCE7; color: #166534; }
+.status-rejected  { background: #FEE2E2; color: #991B1B; }
+.status-withdrawn { background: #F1F5F9; color: #475569; }
+
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.animate-fade-in  { animation: fadeIn  180ms ease both; }
+.animate-slide-up { animation: slideUp 200ms ease both; }
+
+/* ── Diff/confidence highlight ──────────────────────────────── */
+.confidence-high   { border-left: 3px solid #22C55E; }
+.confidence-medium { border-left: 3px solid #F59E0B; }
+.confidence-low    { border-left: 3px solid #EF4444; }
+
+/* ── Code / JSON output ─────────────────────────────────────── */
+pre {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  background: #0F172A;
+  color: #E2E8F0;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  overflow: auto;
+  max-height: 100%;
+  margin: 0;
+}
+
+/* JSON syntax highlighting via CSS (applied by the parser panel) */
+.json-key    { color: #93C5FD; }
+.json-string { color: #86EFAC; }
+.json-number { color: #FCA5A5; }
+.json-bool   { color: #FCD34D; }
+.json-null   { color: #94A3B8; }

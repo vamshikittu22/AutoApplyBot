@@ -8,42 +8,42 @@
 import { useState } from 'react';
 import { useProfileStore } from '@/lib/store/profile-store';
 import type { WorkExperience } from '@/types/profile';
+import { normalizeToMonthInput } from '@/lib/utils/date-utils';
+
+/** Blank form state */
+const emptyForm = (): Partial<WorkExperience> => ({
+  position: '',
+  company: '',
+  startDate: '',
+  endDate: '',
+  achievements: [],
+});
 
 export function WorkExperienceEditor() {
   const { profile, addWorkExperience, updateWorkExperience, deleteWorkExperience } =
     useProfileStore();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<WorkExperience>>({
-    position: '',
-    company: '',
-    startDate: '',
-    endDate: '',
-    achievements: [],
-  });
+  const [formData, setFormData] = useState<Partial<WorkExperience>>(emptyForm());
+  const [isPresent, setIsPresent] = useState(false);
 
   const resetForm = () => {
-    setFormData({
-      position: '',
-      company: '',
-      startDate: '',
-      endDate: '',
-      achievements: [],
-    });
+    setFormData(emptyForm());
+    setIsPresent(false);
     setIsAdding(false);
     setEditingId(null);
   };
 
   const handleAdd = () => {
-    if (!formData.position || !formData.company || !formData.startDate || !formData.endDate) {
-      return;
-    }
-    addWorkExperience(formData as Omit<WorkExperience, 'id'>);
+    if (!formData.position || !formData.company || !formData.startDate) return;
+    const endDate = isPresent ? 'Present' : formData.endDate || '';
+    addWorkExperience({ ...formData, endDate } as Omit<WorkExperience, 'id'>);
     resetForm();
   };
 
   const handleUpdate = (id: string) => {
-    updateWorkExperience(id, formData);
+    const endDate = isPresent ? 'Present' : formData.endDate || '';
+    updateWorkExperience(id, { ...formData, endDate });
     resetForm();
   };
 
@@ -54,16 +54,60 @@ export function WorkExperienceEditor() {
   };
 
   const handleEdit = (exp: WorkExperience) => {
-    setFormData(exp);
+    const present = exp.endDate === 'Present';
+    setFormData({
+      ...exp,
+      startDate: normalizeToMonthInput(exp.startDate),
+      endDate: present ? '' : normalizeToMonthInput(exp.endDate),
+    });
+    setIsPresent(present);
     setEditingId(exp.id);
     setIsAdding(false);
   };
 
   const handleAchievementsChange = (text: string) => {
-    // Split by newline, filter empty lines
     const achievements = text.split('\n').filter((line) => line.trim());
     setFormData({ ...formData, achievements });
   };
+
+  /** Shared date row */
+  const DateRow = () => (
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Start Date</label>
+          <input
+            type="month"
+            value={formData.startDate || ''}
+            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">End Date</label>
+          <input
+            type="month"
+            value={isPresent ? '' : (formData.endDate || '')}
+            onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+            disabled={isPresent}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
+          />
+        </div>
+      </div>
+      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={isPresent}
+          onChange={(e) => {
+            setIsPresent(e.target.checked);
+            if (e.target.checked) setFormData({ ...formData, endDate: '' });
+          }}
+          className="w-4 h-4 accent-blue-600"
+        />
+        I currently work here
+      </label>
+    </div>
+  );
 
   return (
     <div className="space-y-4">
@@ -104,22 +148,7 @@ export function WorkExperienceEditor() {
                   placeholder="Company"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 />
-                <div className="grid grid-cols-2 gap-3">
-                  <input
-                    type="month"
-                    value={formData.startDate || ''}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    placeholder="Start Date"
-                    className="px-3 py-2 border border-gray-300 rounded-lg"
-                  />
-                  <input
-                    type="text"
-                    value={formData.endDate || ''}
-                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    placeholder="End Date (or 'Present')"
-                    className="px-3 py-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
+                <DateRow />
                 <textarea
                   value={(formData.achievements || []).join('\n')}
                   onChange={(e) => handleAchievementsChange(e.target.value)}
@@ -200,22 +229,7 @@ export function WorkExperienceEditor() {
               placeholder="Company"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             />
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="month"
-                value={formData.startDate || ''}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                placeholder="Start Date"
-                className="px-3 py-2 border border-gray-300 rounded-lg"
-              />
-              <input
-                type="text"
-                value={formData.endDate || ''}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                placeholder="End Date (or 'Present')"
-                className="px-3 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
+            <DateRow />
             <textarea
               value={(formData.achievements || []).join('\n')}
               onChange={(e) => handleAchievementsChange(e.target.value)}

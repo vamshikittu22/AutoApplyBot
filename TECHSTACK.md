@@ -90,6 +90,7 @@ Only these permissions are allowed. Adding any permission not listed here requir
 ```
 
 **Explicitly NOT included (and never to be added without major discussion):**
+
 - `tabs` — not needed; activeTab is sufficient
 - `history` — user's browsing history is never accessed
 - `webRequest` — no network interception
@@ -163,6 +164,7 @@ Extension never auto-types AI content into any field
 All data lives in the user's browser. No external database. No user account required for core features.
 
 **profile** (encrypted with user's device key via Web Crypto)
+
 ```
 {
   personal: { name, email, phone, address, workAuthorization },
@@ -177,6 +179,7 @@ All data lives in the user's browser. No external database. No user account requ
 ```
 
 **applications** (plain object array)
+
 ```
 [{
   id, jobTitle, company, atsName, url,
@@ -185,6 +188,7 @@ All data lives in the user's browser. No external database. No user account requ
 ```
 
 **fieldMappings** (custom domain autofill rules saved per domain)
+
 ```
 [{
   domain, fieldSelector, profileAttribute, confidence, savedAt
@@ -192,6 +196,7 @@ All data lives in the user's browser. No external database. No user account requ
 ```
 
 **settings**
+
 ```
 {
   aiProvider: "openai" | "anthropic" | null,

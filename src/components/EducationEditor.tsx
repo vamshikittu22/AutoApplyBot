@@ -8,41 +8,41 @@
 import { useState } from 'react';
 import { useProfileStore } from '@/lib/store/profile-store';
 import type { Education } from '@/types/profile';
+import { normalizeToMonthInput } from '@/lib/utils/date-utils';
+
+/** Blank form state */
+const emptyForm = (): Partial<Education> => ({
+  degree: '',
+  institution: '',
+  startDate: '',
+  endDate: '',
+  gpa: '',
+});
 
 export function EducationEditor() {
   const { profile, addEducation, updateEducation, deleteEducation } = useProfileStore();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<Education>>({
-    degree: '',
-    institution: '',
-    startDate: '',
-    endDate: '',
-    gpa: '',
-  });
+  const [formData, setFormData] = useState<Partial<Education>>(emptyForm());
+  const [isPresent, setIsPresent] = useState(false);
 
   const resetForm = () => {
-    setFormData({
-      degree: '',
-      institution: '',
-      startDate: '',
-      endDate: '',
-      gpa: '',
-    });
+    setFormData(emptyForm());
+    setIsPresent(false);
     setIsAdding(false);
     setEditingId(null);
   };
 
   const handleAdd = () => {
-    if (!formData.degree || !formData.institution || !formData.startDate || !formData.endDate) {
-      return;
-    }
-    addEducation(formData as Omit<Education, 'id'>);
+    if (!formData.degree || !formData.institution || !formData.startDate) return;
+    const endDate = isPresent ? 'Present' : formData.endDate || '';
+    addEducation({ ...formData, endDate } as Omit<Education, 'id'>);
     resetForm();
   };
 
   const handleUpdate = (id: string) => {
-    updateEducation(id, formData);
+    const endDate = isPresent ? 'Present' : formData.endDate || '';
+    updateEducation(id, { ...formData, endDate });
     resetForm();
   };
 
@@ -53,10 +53,55 @@ export function EducationEditor() {
   };
 
   const handleEdit = (edu: Education) => {
-    setFormData(edu);
+    const present = edu.endDate === 'Present';
+    setFormData({
+      ...edu,
+      startDate: normalizeToMonthInput(edu.startDate),
+      endDate: present ? '' : normalizeToMonthInput(edu.endDate),
+    });
+    setIsPresent(present);
     setEditingId(edu.id);
     setIsAdding(false);
   };
+
+  /** Shared date row used in both Add and Edit forms */
+  const DateRow = () => (
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Start Date</label>
+          <input
+            type="month"
+            value={formData.startDate || ''}
+            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">End Date</label>
+          <input
+            type="month"
+            value={isPresent ? '' : (formData.endDate || '')}
+            onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+            disabled={isPresent}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
+          />
+        </div>
+      </div>
+      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={isPresent}
+          onChange={(e) => {
+            setIsPresent(e.target.checked);
+            if (e.target.checked) setFormData({ ...formData, endDate: '' });
+          }}
+          className="w-4 h-4 accent-blue-600"
+        />
+        Currently enrolled / ongoing
+      </label>
+    </div>
+  );
 
   return (
     <div className="space-y-4">
@@ -97,22 +142,7 @@ export function EducationEditor() {
                   placeholder="Institution"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 />
-                <div className="grid grid-cols-2 gap-3">
-                  <input
-                    type="month"
-                    value={formData.startDate || ''}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    placeholder="Start Date"
-                    className="px-3 py-2 border border-gray-300 rounded-lg"
-                  />
-                  <input
-                    type="text"
-                    value={formData.endDate || ''}
-                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    placeholder="End Date (or 'Present')"
-                    className="px-3 py-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
+                <DateRow />
                 <input
                   type="text"
                   value={formData.gpa || ''}
@@ -187,22 +217,7 @@ export function EducationEditor() {
               placeholder="Institution"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
             />
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="month"
-                value={formData.startDate || ''}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                placeholder="Start Date"
-                className="px-3 py-2 border border-gray-300 rounded-lg"
-              />
-              <input
-                type="text"
-                value={formData.endDate || ''}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                placeholder="End Date (or 'Present')"
-                className="px-3 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
+            <DateRow />
             <input
               type="text"
               value={formData.gpa || ''}

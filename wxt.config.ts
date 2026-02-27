@@ -9,7 +9,7 @@ export default defineConfig({
     name: 'AutoApply Copilot',
     description: 'AI-powered job application assistant for ATS platforms',
     version: '0.1.0',
-    permissions: ['activeTab', 'storage'],
+    permissions: ['activeTab', 'storage', 'declarativeContent'],
   },
   vite: () => ({
     resolve: {

@@ -15,6 +15,15 @@ export default defineBackground({
  * Only inject content scripts on pages matching ATS URL patterns
  */
 async function setupDeclarativeContent() {
+  // Guard: declarativeContent requires the 'declarativeContent' manifest permission.
+  if (!chrome.declarativeContent) {
+    console.warn(
+      '[AutoApply] chrome.declarativeContent is unavailable. ' +
+        'Ensure "declarativeContent" is listed in manifest permissions.',
+    );
+    return;
+  }
+
   // Remove existing rules
   await chrome.declarativeContent.onPageChanged.removeRules();
 
