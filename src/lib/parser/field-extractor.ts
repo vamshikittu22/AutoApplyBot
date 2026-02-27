@@ -10,7 +10,6 @@
 import type { PersonalInfo, WorkExperience, Education, Skill } from '@/types/profile';
 import type { FieldConfidence } from '@/types/resume';
 
-
 /**
  * Convert an optional month name + 4-digit year into YYYY-MM format
  * for use with <input type="month">. Falls back to the bare year string
@@ -21,10 +20,29 @@ import type { FieldConfidence } from '@/types/resume';
  */
 function toMonthInputValue(monthName: string, year: string): string {
   const MONTHS: Record<string, string> = {
-    jan: '01', feb: '02', mar: '03', apr: '04', may: '05', jun: '06',
-    jul: '07', aug: '08', sep: '09', oct: '10', nov: '11', dec: '12',
-    january: '01', february: '02', march: '03', april: '04', june: '06',
-    july: '07', august: '08', september: '09', october: '10', november: '11', december: '12',
+    jan: '01',
+    feb: '02',
+    mar: '03',
+    apr: '04',
+    may: '05',
+    jun: '06',
+    jul: '07',
+    aug: '08',
+    sep: '09',
+    oct: '10',
+    nov: '11',
+    dec: '12',
+    january: '01',
+    february: '02',
+    march: '03',
+    april: '04',
+    june: '06',
+    july: '07',
+    august: '08',
+    september: '09',
+    october: '10',
+    november: '11',
+    december: '12',
   };
   const mm = MONTHS[monthName.toLowerCase().trim()];
   return mm ? `${year}-${mm}` : year;
@@ -108,7 +126,8 @@ export function extractContact(text: string): {
       emailRegex.test(line) ||
       phoneRegex.test(line) ||
       /linkedin|github|portfolio/i.test(line)
-    ) continue;
+    )
+      continue;
     const locMatch = line.match(locationRegex);
     if (locMatch) {
       contact.location = locMatch[0];
@@ -168,37 +187,60 @@ export function extractWorkHistory(text: string): {
 
     if (pipeParts.length >= 2) {
       // First segment = company, second = title (strip any trailing date/location)
-      work.company  = (pipeParts[0] ?? '').trim();
+      work.company = (pipeParts[0] ?? '').trim();
       // Title segment may have trailing whitespace + date; strip after the last word
       // that doesn't look like a month or year.
       const rawTitle = (pipeParts[1] ?? '').trim();
       // Remove trailing date-like suffix: "Software Engineer   Feb 2025 – Present"
       work.position = rawTitle.replace(/\s{2,}.*$/, '').trim() || rawTitle;
       confidence.push(
-        { field: `workHistory[${index}].company`,  confidence: 85, source: 'pattern-match', rawValue: work.company },
-        { field: `workHistory[${index}].position`, confidence: 85, source: 'pattern-match', rawValue: work.position },
+        {
+          field: `workHistory[${index}].company`,
+          confidence: 85,
+          source: 'pattern-match',
+          rawValue: work.company,
+        },
+        {
+          field: `workHistory[${index}].position`,
+          confidence: 85,
+          source: 'pattern-match',
+          rawValue: work.position,
+        }
       );
     } else {
       // Fall back: first line = position, second line = company (if not a date)
       work.position = firstLine;
-      confidence.push({ field: `workHistory[${index}].position`, confidence: 75, source: 'heuristic', rawValue: firstLine });
+      confidence.push({
+        field: `workHistory[${index}].position`,
+        confidence: 75,
+        source: 'heuristic',
+        rawValue: firstLine,
+      });
       if (lines.length > 1 && lines[1] && !/\d{4}/.test(lines[1])) {
         work.company = lines[1];
-        confidence.push({ field: `workHistory[${index}].company`, confidence: 75, source: 'heuristic', rawValue: lines[1] });
+        confidence.push({
+          field: `workHistory[${index}].company`,
+          confidence: 75,
+          source: 'heuristic',
+          rawValue: lines[1],
+        });
       }
     }
 
     // ── Dates ──────────────────────────────────────────────────────────────
     // Matches: "Feb 2025 – Present", "Aug 2024 – Dec 2024", "2021 – 2023"
-    const dateRegex = /([A-Za-z]+\s+)?\b((?:19|20)\d{2})\b\s*[-–—]\s*([A-Za-z]+\s+)?\b((?:19|20)\d{2}|Present|Current)\b/i;
+    const dateRegex =
+      /([A-Za-z]+\s+)?\b((?:19|20)\d{2})\b\s*[-–—]\s*([A-Za-z]+\s+)?\b((?:19|20)\d{2}|Present|Current)\b/i;
     const dateMatch = entry.match(dateRegex);
     if (dateMatch) {
       const startMonth = dateMatch[1] ? dateMatch[1].trim() : '';
-      const startYear  = dateMatch[2] ?? '';
-      const endMonth   = dateMatch[3] ? dateMatch[3].trim() : '';
-      const endRaw     = dateMatch[4] ?? '';
+      const startYear = dateMatch[2] ?? '';
+      const endMonth = dateMatch[3] ? dateMatch[3].trim() : '';
+      const endRaw = dateMatch[4] ?? '';
       work.startDate = toMonthInputValue(startMonth, startYear);
-      work.endDate   = /present|current/i.test(endRaw) ? 'Present' : toMonthInputValue(endMonth, endRaw);
+      work.endDate = /present|current/i.test(endRaw)
+        ? 'Present'
+        : toMonthInputValue(endMonth, endRaw);
       confidence.push({
         field: `workHistory[${index}].dates`,
         confidence: 90,
@@ -252,25 +294,29 @@ function splitByJobEntries(text: string): string[] {
   // Split by double newlines first
   let entries = text.split(/\n\s*\n/).filter(Boolean);
 
-  // If only one entry but text is very long, try splitting by date patterns
+  // If only one entry but text is very long, try splitting by company name patterns
+  // Common format: "Company | Position    Date | Location" at the start of a job entry
   if (entries.length === 1 && text.length > 500) {
-    const datePattern = /(\w+\s+)?\d{4}\s*[-–—]\s*((\w+\s+)?\d{4}|Present|Current)/gi;
-    const matches = [...text.matchAll(datePattern)];
+    // Match lines that look like: "Company Name | Job Title"
+    // This pattern detects lines with company | title format
+    const companyTitlePattern = /^([A-Z][^\n|]+)\s*\|\s*([^\n]+)$/gm;
+    const matches = [...text.matchAll(companyTitlePattern)];
 
     if (matches.length > 1) {
-      // Split at each date match
+      // Split at each company|title match
       entries = [];
       let lastIndex = 0;
 
       matches.forEach((match, i) => {
         if (i > 0 && match.index !== undefined) {
-          entries.push(text.substring(lastIndex, match.index));
+          entries.push(text.substring(lastIndex, match.index).trim());
           lastIndex = match.index;
         }
       });
 
       // Add final entry
-      entries.push(text.substring(lastIndex));
+      entries.push(text.substring(lastIndex).trim());
+      entries = entries.filter((e) => e.length > 0);
     }
   }
 
@@ -344,29 +390,67 @@ export function extractEducation(text: string): {
 
     if (lines.length === 0) return;
 
-    // --- Degree (first line) ---
-    edu.degree = lines[0];
-    confidence.push({
-      field: `education[${index}].degree`,
-      confidence: 85,
-      source: 'heuristic',
-      rawValue: lines[0],
-    });
+    // --- Handle single-line format: "Degree, Institution, Location. Date" ---
+    // Example: "Masters in Computer Information Systems, University of Central Missouri, Warrensburg, USA.    Dec 2024"
+    if (lines.length === 1 && lines[0]!.includes(',')) {
+      const singleLine = lines[0]!;
 
-    // --- Institution (second non-date line) ---
-    // Skip lines that are purely a date range when looking for institution
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i]!;
-      // If the line looks like a date range or standalone year, skip it
-      if (dateRangeRegex.test(line) || /^\s*((?:19|20)\d{2})\s*$/.test(line)) continue;
-      edu.institution = line;
+      // Remove date from the end (matches "Dec 2024", "2024", "Jan 2020 - May 2024", etc.)
+      const datePattern =
+        /([A-Za-z]+\s+)?\b((?:19|20)\d{2})\b\s*[-–—]\s*([A-Za-z]+\s+)?\b((?:19|20)\d{2}|Present|Current)\b|([A-Za-z]+\s+)?((?:19|20)\d{2})\b$/i;
+      const contentWithoutDate = singleLine.replace(datePattern, '').trim();
+
+      // Split by comma
+      const parts = contentWithoutDate
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean);
+
+      if (parts.length >= 2) {
+        // First part is degree, second part is institution
+        edu.degree = parts[0];
+        edu.institution = parts[1];
+
+        confidence.push({
+          field: `education[${index}].degree`,
+          confidence: 85,
+          source: 'pattern-match',
+          rawValue: parts[0],
+        });
+
+        confidence.push({
+          field: `education[${index}].institution`,
+          confidence: 85,
+          source: 'pattern-match',
+          rawValue: parts[1],
+        });
+      }
+    } else {
+      // --- Multi-line format ---
+      // --- Degree (first line) ---
+      edu.degree = lines[0];
       confidence.push({
-        field: `education[${index}].institution`,
+        field: `education[${index}].degree`,
         confidence: 85,
         source: 'heuristic',
-        rawValue: line,
+        rawValue: lines[0],
       });
-      break;
+
+      // --- Institution (second non-date line) ---
+      // Skip lines that are purely a date range when looking for institution
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i]!;
+        // If the line looks like a date range or standalone year, skip it
+        if (dateRangeRegex.test(line) || /^\s*((?:19|20)\d{2})\s*$/.test(line)) continue;
+        edu.institution = line;
+        confidence.push({
+          field: `education[${index}].institution`,
+          confidence: 85,
+          source: 'heuristic',
+          rawValue: line,
+        });
+        break;
+      }
     }
 
     // --- Dates ---
@@ -380,8 +464,9 @@ export function extractEducation(text: string): {
 
       // Build YYYY-MM for <input type="month"> if month is present, else just YYYY
       edu.startDate = toMonthInputValue(startMonth, startYear);
-      edu.endDate =
-        /present|current/i.test(endRaw) ? 'Present' : toMonthInputValue(endMonth, endRaw);
+      edu.endDate = /present|current/i.test(endRaw)
+        ? 'Present'
+        : toMonthInputValue(endMonth, endRaw);
 
       confidence.push({
         field: `education[${index}].dates`,
@@ -430,7 +515,6 @@ export function extractEducation(text: string): {
 
   return { education, confidence };
 }
-
 
 /**
  * Extract skills from resume section.
