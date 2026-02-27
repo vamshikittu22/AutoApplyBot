@@ -37,8 +37,11 @@ import { ResumeSection } from '@/types/resume';
  */
 export function parseResume(resumeText: string): ParserResult<ParsedResume> {
   try {
+    console.log('🔍 parseResume called with text length:', resumeText?.length);
+
     // Validation: Minimum length check
     if (!resumeText || resumeText.trim().length < 50) {
+      console.warn('⚠️ Resume text too short:', resumeText?.length, 'characters');
       return {
         success: false,
         error: 'Resume text too short (minimum 50 characters). Please paste complete resume.',
@@ -46,9 +49,17 @@ export function parseResume(resumeText: string): ParserResult<ParsedResume> {
     }
 
     // Step 1: Detect sections
+    console.log('📋 Detecting sections...');
     const sections = detectSections(resumeText);
+    console.log(
+      '📋 Detected',
+      sections.length,
+      'sections:',
+      sections.map((s) => s.type)
+    );
 
     if (sections.length === 0) {
+      console.error('❌ No sections detected');
       return {
         success: false,
         error: 'Unable to detect any resume sections. Please check resume format.',
@@ -118,9 +129,19 @@ export function parseResume(resumeText: string): ParserResult<ParsedResume> {
 
     // Step 3: Calculate overall accuracy
     const accuracy = calculateParseAccuracy(profile);
+    console.log('📊 Parse accuracy:', accuracy + '%');
+    console.log('📊 Extracted:', {
+      name: !!profile.personal?.name,
+      email: !!profile.personal?.email,
+      phone: !!profile.personal?.phone,
+      work: (profile.workHistory?.length || 0) + ' entries',
+      education: (profile.education?.length || 0) + ' entries',
+      skills: (profile.skills?.length || 0) + ' items',
+    });
 
     // Check if accuracy meets minimum threshold
     if (accuracy < 50) {
+      console.error('❌ Accuracy too low:', accuracy + '%');
       return {
         success: false,
         error: `Parse accuracy too low (${accuracy}%). Resume format may not be supported. Please verify your resume follows a standard chronological format.`,
@@ -134,6 +155,7 @@ export function parseResume(resumeText: string): ParserResult<ParsedResume> {
     }
 
     // Success case
+    console.log('✅ Parse successful! Accuracy:', accuracy + '%');
     return {
       success: true,
       data: {

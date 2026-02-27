@@ -136,9 +136,18 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   parseResume: async (resumeText: string) => {
     set({ isParsing: true, error: null });
     try {
-      const result = await parseResumeUtil(resumeText);
+      console.log('🔍 Starting resume parse, text length:', resumeText.length);
+
+      // parseResumeUtil is synchronous, not async
+      const result = parseResumeUtil(resumeText);
+
+      console.log('📊 Parse result:', result.success ? 'SUCCESS' : 'FAILED');
 
       if (!result.success) {
+        console.error('❌ Parse error:', result.error);
+        if (result.partialData) {
+          console.log('📄 Partial data available:', result.partialData);
+        }
         set({
           error: result.error || 'Failed to parse resume',
           isParsing: false,
@@ -147,6 +156,15 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       }
 
       const { profile: parsedProfile, confidenceScores } = result.data;
+
+      console.log('✅ Extracted fields:', {
+        name: parsedProfile.personal?.name,
+        email: parsedProfile.personal?.email,
+        phone: parsedProfile.personal?.phone,
+        workEntries: parsedProfile.workHistory?.length,
+        educationEntries: parsedProfile.education?.length,
+        skills: parsedProfile.skills?.length,
+      });
 
       // Merge parsed data with empty profile structure
       const profile: Profile = {
@@ -162,9 +180,12 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         isParsing: false,
       });
 
+      console.log('💾 Auto-saving parsed profile...');
       // Auto-save after successful parse
       await get().saveProfile();
+      console.log('✅ Profile saved successfully');
     } catch (error) {
+      console.error('💥 Parse exception:', error);
       set({
         error: error instanceof Error ? error.message : 'Failed to parse resume',
         isParsing: false,
