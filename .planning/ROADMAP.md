@@ -163,14 +163,17 @@ Plans:
 - REQ-SAF-02: Per-site disable toggle
 - REQ-SAF-03: CAPTCHA detection & pause
 
-**Plans:** 5 plans in 3 waves
+**Plans:** 8 plans (5 initial + 3 gap closures) in 3 waves
 
 Plans:
-- [ ] 04-01-PLAN.md — Tracker data layer (types, storage, utils) (Wave 1)
-- [ ] 04-02-PLAN.md — CAPTCHA detection system with badge notification (Wave 1)
-- [ ] 04-03-PLAN.md — Submission logging with hybrid detection (Wave 2)
-- [ ] 04-04-PLAN.md — Tracker UI with filtering and sorting (Wave 3)
-- [ ] 04-05-PLAN.md — Volume warning and per-job disable controls (Wave 3)
+- [x] 04-01-PLAN.md — Tracker data layer (types, storage, utils) (Wave 1)
+- [x] 04-02-PLAN.md — CAPTCHA detection system with badge notification (Wave 1)
+- [x] 04-03-PLAN.md — Submission logging with hybrid detection (Wave 2)
+- [x] 04-04-PLAN.md — Tracker UI with filtering and sorting (Wave 3)
+- [x] 04-05-PLAN.md — Volume warning and per-job disable controls (Wave 3)
+- [ ] 04-06-PLAN.md — Fix TypeScript strict mode errors (Gap Closure, Wave 1)
+- [ ] 04-07-PLAN.md — Create missing 04-04-SUMMARY.md (Gap Closure, Wave 1)
+- [ ] 04-08-PLAN.md — Manual E2E testing on live ATS platforms (Gap Closure Checkpoint, Wave 1)
 
 **Definition of Done:**
 - [ ] Applications auto-logged after submission
