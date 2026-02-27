@@ -1,6 +1,6 @@
-import { defineContentScript } from 'wxt/sandbox';
 import { detectQuestionFields, watchForQuestionFields } from '@/lib/ai/question-detector';
 import { mountAISuggestButton } from './ai-suggest.content/index';
+import { isJobDisabled } from '@/lib/safety/site-disable';
 import type { QuestionField } from '@/lib/ai/question-detector';
 import type { ATSType } from '@/types/ats';
 
@@ -9,6 +9,13 @@ export default defineContentScript({
   runAt: 'document_idle',
 
   async main() {
+    // Check if job is disabled
+    const disabled = await isJobDisabled(window.location.href);
+    if (disabled) {
+      console.log('[AI Suggest] Job is disabled, skipping AI features');
+      return;
+    }
+
     // Wait for ATS detection
     const atsType = await getDetectedATS();
     if (!atsType) {
@@ -26,6 +33,18 @@ export default defineContentScript({
     watchForQuestionFields((fields) => {
       injectSuggestButtons(fields, atsType);
     }, atsType);
+
+    // Listen for job disable/enable messages
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === 'JOB_DISABLED' && message.url === window.location.href) {
+        console.log('[AI Suggest] Job disabled, removing AI buttons');
+        removeAllAIButtons();
+      } else if (message.type === 'JOB_ENABLED' && message.url === window.location.href) {
+        console.log('[AI Suggest] Job re-enabled, re-initializing AI buttons');
+        const fields = detectQuestionFields(atsType);
+        injectSuggestButtons(fields, atsType);
+      }
+    });
   },
 });
 
@@ -103,4 +122,18 @@ function insertButton(field: HTMLTextAreaElement | HTMLInputElement, container: 
  */
 function generateId(): string {
   return Math.random().toString(36).substring(2, 11);
+}
+
+/**
+ * Remove all AI suggest buttons from page
+ */
+function removeAllAIButtons(): void {
+  const containers = document.querySelectorAll('.ai-suggest-button-container');
+  containers.forEach((container) => container.remove());
+
+  // Clear injected flags
+  const fields = document.querySelectorAll('[data-ai-suggest-injected="true"]');
+  fields.forEach((field) => {
+    field.removeAttribute('data-ai-suggest-injected');
+  });
 }

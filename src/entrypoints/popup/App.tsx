@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { TrackerList } from './components/TrackerList';
+import { VolumeWarning } from './components/VolumeWarning';
+import { SiteDisableToggle } from './components/SiteDisableToggle';
 import './style.css';
 
 type Tab = 'tracker' | 'profile' | 'settings';
@@ -47,6 +49,16 @@ function App(): React.ReactElement {
           Settings
         </button>
       </div>
+
+      {/* Safety controls - shown at top of tracker tab */}
+      {activeTab === 'tracker' && (
+        <div className="p-3 border-b border-gray-200">
+          <SiteDisableToggle />
+          <div className="mt-2">
+            <VolumeWarning />
+          </div>
+        </div>
+      )}
 
       {/* Tab content */}
       <div className="flex-1 overflow-hidden">

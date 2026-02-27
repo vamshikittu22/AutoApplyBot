@@ -15,7 +15,6 @@ import { getTodayDateString } from '@/lib/tracker/utils';
 
 export function VolumeWarning(): React.ReactElement | null {
   const [isVisible, setIsVisible] = useState(false);
-  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
     checkWarningVisibility();
@@ -35,7 +34,6 @@ export function VolumeWarning(): React.ReactElement | null {
     const wasDismissed = localStorage.getItem(dismissKey) === 'true';
 
     if (wasDismissed) {
-      setIsDismissed(true);
       setIsVisible(false);
     } else {
       setIsVisible(true);
@@ -48,7 +46,6 @@ export function VolumeWarning(): React.ReactElement | null {
     const dismissKey = `volumeWarningDismissed-${today}`;
     localStorage.setItem(dismissKey, 'true');
 
-    setIsDismissed(true);
     setIsVisible(false);
   };
 
