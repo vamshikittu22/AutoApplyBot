@@ -8,9 +8,9 @@
 
 **Last Updated:** 2026-02-27
 **Current Phase:** Phase 4 (Job Tracker & Safety)
-**Current Plan:** 01 of 04 complete
-**Phase Status:** In Progress (1/4 plans done)
-**Overall Progress:** Phase 4: 25% complete (1/4 plans done)
+**Current Plan:** 02 of 04 complete
+**Phase Status:** In Progress (2/4 plans done)
+**Overall Progress:** Phase 4: 50% complete (2/4 plans done)
 
 ---
 
@@ -22,7 +22,7 @@
 | Phase 1: Profile & Resume | Complete | 2026-02-21 | 2026-02-21 | 100% (4/4 plans) |
 | Phase 2: ATS Detection & Autofill | Complete | 2026-02-24 | 2026-02-24 | 100% (6/6 plans) |
 | Phase 3: AI Answer Generation | Complete | 2026-02-26 | 2026-02-26 | 100% (7/7 plans) |
-| Phase 4: Job Tracker & Safety | In Progress | 2026-02-27 | - | 25% (1/4 plans) |
+| Phase 4: Job Tracker & Safety | In Progress | 2026-02-27 | - | 50% (2/4 plans) |
 | Phase 5: Polish & Launch Prep | Not Started | - | - | 0% |
 | Phase 6: Beta Testing & Launch | Not Started | - | - | 0% |
 
@@ -441,9 +441,46 @@
 
 ---
 
+### 2026-02-27: Plan 04-02 Execution Decisions
+
+**Decision:** MutationObserver scope attached to document.body with 500ms debounce
+**Rationale:** Balances responsiveness with performance - monitoring full document creates excessive callbacks, scoping to body covers all visible forms
+**Impact:** CAPTCHA detection responds within 500ms of DOM changes while avoiding performance overhead
+**Status:** LOCKED
+
+---
+
+**Decision:** Extension badge shows ⚠️ emoji with orange background (#FF9800)
+**Rationale:** Warning signal without alarm (not red/blocking), emoji has high visibility in toolbar
+**Impact:** Users get immediate visual feedback when CAPTCHA blocks autofill
+**Status:** LOCKED
+
+---
+
+**Decision:** Expose window.isCaptchaBlocking() for autofill integration
+**Rationale:** Simpler than message passing for synchronous checks, autofill engine can check immediately before filling
+**Impact:** Autofill engine calls window.isCaptchaBlocking() before fillForm() to prevent filling during CAPTCHA
+**Status:** LOCKED
+
+---
+
+**Decision:** Removed getBoundingClientRect() dimension checks for visibility
+**Rationale:** jsdom/happy-dom test environments don't render layout (always return 0x0 dimensions)
+**Impact:** Rely on CSS property checks only (display, visibility, opacity) - still accurate for production
+**Status:** LOCKED
+
+---
+
+**Decision:** Special handling for script tag detection (reCAPTCHA v3)
+**Rationale:** reCAPTCHA v3 loads via <script> tag with no visual element (getBoundingClientRect returns 0x0 even in real browser)
+**Impact:** SCRIPT tags treated as "present" if in DOM, bypassing visibility checks
+**Status:** LOCKED
+
+---
+
 ## Active Blockers
 
-*No blockers - Phase 4 Plan 01 complete. Ready for Plan 04-02.*
+*No blockers - Phase 4 Plan 02 complete. Ready for Plan 04-03.*
 
 ---
 
@@ -495,6 +532,7 @@
 | 03-06 | 6 min | 4 | 4 | 2026-02-26 |
 | 03-07 | 1 min | 1 | 1 | 2026-02-26 |
 | 04-01 | 5 min | 3 | 5 | 2026-02-27 |
+| 04-02 | 9 min | 3 | 4 | 2026-02-27 |
 
 ## Deferred to v2
 
