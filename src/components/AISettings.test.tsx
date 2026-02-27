@@ -42,9 +42,9 @@ describe('AISettings', () => {
     await waitFor(() => screen.getAllByPlaceholderText('sk-...'));
 
     const inputs = screen.getAllByPlaceholderText('sk-...');
-    const openaiInput = inputs[0]; // First one is OpenAI
+    const openaiInput = inputs[0]!; // First one is OpenAI
     const buttons = screen.getAllByText('Validate & Save');
-    const openaiButton = buttons[0]; // First button is OpenAI
+    const openaiButton = buttons[0]!; // First button is OpenAI
 
     fireEvent.change(openaiInput, { target: { value: 'invalid-key' } });
     fireEvent.click(openaiButton);
@@ -67,9 +67,9 @@ describe('AISettings', () => {
     await waitFor(() => screen.getAllByPlaceholderText('sk-...'));
 
     const inputs = screen.getAllByPlaceholderText('sk-...');
-    const openaiInput = inputs[0];
+    const openaiInput = inputs[0]!;
     const buttons = screen.getAllByText('Validate & Save');
-    const openaiButton = buttons[0];
+    const openaiButton = buttons[0]!;
 
     fireEvent.change(openaiInput, { target: { value: 'sk-test-key' } });
     fireEvent.click(openaiButton);

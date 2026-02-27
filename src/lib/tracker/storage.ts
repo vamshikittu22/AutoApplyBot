@@ -82,7 +82,7 @@ export async function updateApplication(
   }
 
   // Merge updates into existing application
-  applications[appIndex] = { ...applications[appIndex], ...updates };
+  applications[appIndex] = { ...applications[appIndex], ...updates } as TrackedApplication;
 
   await chrome.storage.local.set({ [STORAGE_KEY]: applications });
 }

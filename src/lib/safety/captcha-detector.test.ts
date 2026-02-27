@@ -2,7 +2,7 @@
  * Tests for CAPTCHA detection module
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { isCaptchaPresent, getCaptchaType, CAPTCHA_SELECTORS } from './captcha-detector';
 
 describe('captcha-detector', () => {

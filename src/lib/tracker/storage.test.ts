@@ -188,9 +188,9 @@ describe('getApplications', () => {
     mockStorage.applications = [app1, app2, app3];
 
     const apps = await getApplications();
-    expect(apps[0].id).toBe('2'); // Newest first
-    expect(apps[1].id).toBe('3'); // Middle
-    expect(apps[2].id).toBe('1'); // Oldest last
+    expect(apps[0]?.id).toBe('2'); // Newest first
+    expect(apps[1]?.id).toBe('3'); // Middle
+    expect(apps[2]?.id).toBe('1'); // Oldest last
   });
 });
 
@@ -383,7 +383,7 @@ describe('getApplicationsToday', () => {
 
     const todayApps = await getApplicationsToday();
     expect(todayApps).toHaveLength(1);
-    expect(todayApps[0].id).toBe('1');
+    expect(todayApps[0]?.id).toBe('1');
   });
 
   it('should return empty array if no applications today', async () => {

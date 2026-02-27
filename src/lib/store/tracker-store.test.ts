@@ -92,7 +92,7 @@ describe('tracker-store', () => {
       const filtered = useTrackerStore.getState().filteredApplications();
 
       expect(filtered).toHaveLength(1);
-      expect(filtered[0].atsType).toBe('workday');
+      expect(filtered[0]?.atsType).toBe('workday');
     });
 
     it('should filter by date range (from)', () => {
@@ -123,7 +123,7 @@ describe('tracker-store', () => {
       const filtered = useTrackerStore.getState().filteredApplications();
 
       expect(filtered).toHaveLength(1);
-      expect(filtered[0].id).toBe('3');
+      expect(filtered[0]?.id).toBe('3');
     });
 
     it('should clear all filters', () => {

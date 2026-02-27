@@ -2,7 +2,8 @@
  * Unit tests for submission logger metadata extraction
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
+// @ts-ignore - jsdom types not needed for test environment
 import { JSDOM } from 'jsdom';
 
 describe('Submission Logger Metadata Extraction', () => {
