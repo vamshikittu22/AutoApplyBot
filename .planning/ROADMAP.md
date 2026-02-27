@@ -163,7 +163,14 @@ Plans:
 - REQ-SAF-02: Per-site disable toggle
 - REQ-SAF-03: CAPTCHA detection & pause
 
-**Plans:** [To be planned]
+**Plans:** 5 plans in 3 waves
+
+Plans:
+- [ ] 04-01-PLAN.md — Tracker data layer (types, storage, utils) (Wave 1)
+- [ ] 04-02-PLAN.md — CAPTCHA detection system with badge notification (Wave 1)
+- [ ] 04-03-PLAN.md — Submission logging with hybrid detection (Wave 2)
+- [ ] 04-04-PLAN.md — Tracker UI with filtering and sorting (Wave 3)
+- [ ] 04-05-PLAN.md — Volume warning and per-job disable controls (Wave 3)
 
 **Definition of Done:**
 - [ ] Applications auto-logged after submission
