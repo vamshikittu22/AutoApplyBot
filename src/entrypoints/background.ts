@@ -85,6 +85,31 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
   }
 
+  if (message.type === 'CAPTCHA_DETECTED') {
+    // Update badge to show warning when CAPTCHA is present
+    const tabId = sender.tab?.id;
+    if (tabId) {
+      chrome.action.setBadgeText({ text: '⚠️', tabId }).catch((err) => {
+        console.warn('[AutoApply] Failed to set badge text:', err);
+      });
+      chrome.action.setBadgeBackgroundColor({ color: '#FF9800', tabId }).catch((err) => {
+        console.warn('[AutoApply] Failed to set badge color:', err);
+      });
+      console.log('[AutoApply] CAPTCHA detected, badge updated for tab:', tabId);
+    }
+  }
+
+  if (message.type === 'CAPTCHA_CLEARED') {
+    // Clear badge when CAPTCHA is no longer present
+    const tabId = sender.tab?.id;
+    if (tabId) {
+      chrome.action.setBadgeText({ text: '', tabId }).catch((err) => {
+        console.warn('[AutoApply] Failed to clear badge text:', err);
+      });
+      console.log('[AutoApply] CAPTCHA cleared, badge removed for tab:', tabId);
+    }
+  }
+
   sendResponse({ success: true });
   return true;
 });
