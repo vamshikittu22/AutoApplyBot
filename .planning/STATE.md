@@ -602,6 +602,7 @@
 | 04-02 | 9 min | 3 | 4 | 2026-02-27 |
 | 04-03 | 4 min | 3 | 5 | 2026-02-27 |
 | 04-07 | 2 min | 3 | 1 | 2026-02-27 |
+| Phase 04-job-tracker-safety P04-06 | 5 | 3 tasks | 9 files |
 
 ## Deferred to v2
 
