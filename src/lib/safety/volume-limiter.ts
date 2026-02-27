@@ -22,7 +22,9 @@ const WARNING_THRESHOLD = 15; // Applications per day before warning
  * @returns Current volume data with today's date and count
  */
 export async function getVolumeData(): Promise<VolumeData> {
-  const { [STORAGE_KEY]: volumeData } = await chrome.storage.local.get(STORAGE_KEY);
+  const { [STORAGE_KEY]: volumeData } = (await chrome.storage.local.get(STORAGE_KEY)) as {
+    [STORAGE_KEY]?: VolumeData;
+  };
 
   const today = getTodayDateString();
 

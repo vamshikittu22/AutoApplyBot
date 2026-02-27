@@ -23,7 +23,9 @@ const STORAGE_KEY = 'applications';
  * @throws Error if duplicate detected (same normalized URL)
  */
 export async function saveApplication(app: TrackedApplication): Promise<void> {
-  const { applications = [] } = await chrome.storage.local.get(STORAGE_KEY);
+  const { applications = [] } = (await chrome.storage.local.get(STORAGE_KEY)) as {
+    applications?: TrackedApplication[];
+  };
 
   // Check for duplicate URLs (normalized comparison)
   const isDuplicate = applications.some(
@@ -45,7 +47,9 @@ export async function saveApplication(app: TrackedApplication): Promise<void> {
  * @returns Array of tracked applications (empty array if none)
  */
 export async function getApplications(): Promise<TrackedApplication[]> {
-  const { applications = [] } = await chrome.storage.local.get(STORAGE_KEY);
+  const { applications = [] } = (await chrome.storage.local.get(STORAGE_KEY)) as {
+    applications?: TrackedApplication[];
+  };
 
   // Sort by appliedDate descending (newest first)
   return applications.sort((a: TrackedApplication, b: TrackedApplication) => {
@@ -67,7 +71,9 @@ export async function updateApplication(
   id: string,
   updates: Partial<TrackedApplication>
 ): Promise<void> {
-  const { applications = [] } = await chrome.storage.local.get(STORAGE_KEY);
+  const { applications = [] } = (await chrome.storage.local.get(STORAGE_KEY)) as {
+    applications?: TrackedApplication[];
+  };
 
   const appIndex = applications.findIndex((app: TrackedApplication) => app.id === id);
 
@@ -87,7 +93,9 @@ export async function updateApplication(
  * @param id - Application ID to delete
  */
 export async function deleteApplication(id: string): Promise<void> {
-  const { applications = [] } = await chrome.storage.local.get(STORAGE_KEY);
+  const { applications = [] } = (await chrome.storage.local.get(STORAGE_KEY)) as {
+    applications?: TrackedApplication[];
+  };
 
   const filtered = applications.filter((app: TrackedApplication) => app.id !== id);
 
