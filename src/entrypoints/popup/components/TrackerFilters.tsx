@@ -11,7 +11,6 @@
 
 import React from 'react';
 import { useTrackerStore } from '@/lib/store/tracker-store';
-import type { ApplicationStatus, ATSPlatform } from '@/types/tracker';
 
 export function TrackerFilters(): React.ReactElement {
   const { filterStatus, filterPlatform, sortBy, sortOrder, setFilter, setSorting, clearFilters } =

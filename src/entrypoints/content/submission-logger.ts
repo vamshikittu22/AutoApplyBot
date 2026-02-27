@@ -195,7 +195,9 @@ async function storePendingSubmission(metadata: TrackedApplication): Promise<voi
  */
 async function getPendingSubmission(): Promise<PendingSubmission | null> {
   try {
-    const { pendingSubmission } = await chrome.storage.session.get('pendingSubmission');
+    const { pendingSubmission } = (await chrome.storage.session.get('pendingSubmission')) as {
+      pendingSubmission?: PendingSubmission;
+    };
 
     if (!pendingSubmission) {
       return null;
