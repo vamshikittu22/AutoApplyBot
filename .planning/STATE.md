@@ -8,9 +8,9 @@
 
 **Last Updated:** 2026-02-27
 **Current Phase:** Phase 4 (Job Tracker & Safety)
-**Current Plan:** 02 of 04 complete
-**Phase Status:** In Progress (2/4 plans done)
-**Overall Progress:** Phase 4: 50% complete (2/4 plans done)
+**Current Plan:** 03 of 04 complete
+**Phase Status:** In Progress (3/4 plans done)
+**Overall Progress:** Phase 4: 75% complete (3/4 plans done)
 
 ---
 
@@ -22,7 +22,7 @@
 | Phase 1: Profile & Resume | Complete | 2026-02-21 | 2026-02-21 | 100% (4/4 plans) |
 | Phase 2: ATS Detection & Autofill | Complete | 2026-02-24 | 2026-02-24 | 100% (6/6 plans) |
 | Phase 3: AI Answer Generation | Complete | 2026-02-26 | 2026-02-26 | 100% (7/7 plans) |
-| Phase 4: Job Tracker & Safety | In Progress | 2026-02-27 | - | 50% (2/4 plans) |
+| Phase 4: Job Tracker & Safety | In Progress | 2026-02-27 | - | 75% (3/4 plans) |
 | Phase 5: Polish & Launch Prep | Not Started | - | - | 0% |
 | Phase 6: Beta Testing & Launch | Not Started | - | - | 0% |
 
@@ -441,6 +441,43 @@
 
 ---
 
+### 2026-02-27: Plan 04-03 Execution Decisions
+
+**Decision:** Volume threshold set at 15 apps/day (soft warning only)
+**Rationale:** CONTEXT.md specified "warnings only" (no hard block); 15 apps/day is conservative threshold before showing soft warning
+**Impact:** Users retain full control, warning guides behavior without restricting freedom
+**Status:** LOCKED
+
+---
+
+**Decision:** Calendar day reset at midnight (user's local timezone, not rolling 24h window)
+**Rationale:** More intuitive UX - users understand "today" better than "last 24 hours"
+**Impact:** Volume tracking resets at midnight in user's timezone
+**Status:** LOCKED
+
+---
+
+**Decision:** Hybrid submission detection (form submit event + URL change monitoring)
+**Rationale:** Form submit alone has false positives (users may cancel, validation may fail); URL change to success pattern confirms actual submission completed
+**Impact:** Reliable logging with minimal false positives, works across ATS platforms
+**Status:** LOCKED
+
+---
+
+**Decision:** 10-second timeout for pending submissions in session storage
+**Rationale:** Most successful submissions redirect within 2-3 seconds; 10 seconds handles slower platforms while preventing indefinite stale data
+**Impact:** Prevents logging of abandoned applications where user clicked submit but closed tab before redirect
+**Status:** LOCKED
+
+---
+
+**Decision:** Duplicate detection warns but doesn't block (7-day threshold)
+**Rationale:** CONTEXT.md specified "warn" not "prevent"; user may reapply intentionally (updated resume, different referral)
+**Impact:** User sees warning but retains ability to proceed
+**Status:** LOCKED
+
+---
+
 ### 2026-02-27: Plan 04-02 Execution Decisions
 
 **Decision:** MutationObserver scope attached to document.body with 500ms debounce
@@ -480,7 +517,7 @@
 
 ## Active Blockers
 
-*No blockers - Phase 4 Plan 02 complete. Ready for Plan 04-03.*
+*No blockers - Phase 4 Plan 03 complete. Ready for Plan 04-04 (Tracker UI).*
 
 ---
 
@@ -533,6 +570,7 @@
 | 03-07 | 1 min | 1 | 1 | 2026-02-26 |
 | 04-01 | 5 min | 3 | 5 | 2026-02-27 |
 | 04-02 | 9 min | 3 | 4 | 2026-02-27 |
+| 04-03 | 4 min | 3 | 5 | 2026-02-27 |
 
 ## Deferred to v2
 
@@ -816,6 +854,37 @@
 - Created 04-01-SUMMARY.md with self-check verification
 - Status: Plan 01 complete (5 min), Phase 4 now 25% complete (1/4 plans done)
 - Ready for Plan 04-02: Volume tracking and safety controls
+
+### 2026-02-27: Phase 4 Plan 02 Execution
+- Executed 04-02-PLAN.md (CAPTCHA detection and monitoring)
+- Created comprehensive CAPTCHA detector for reCAPTCHA, hCaptcha, Cloudflare Turnstile
+- Implemented element visibility checking with CSS property validation
+- Built CAPTCHA content script with MutationObserver (500ms debounce, document.body scope)
+- Extended background script with badge notification (⚠️ emoji, orange background)
+- Exposed window.isCaptchaBlocking() for synchronous autofill integration
+- Fixed 2 critical bugs: jsdom dimension testing issue (removed getBoundingClientRect checks), script tag visibility handling
+- Comprehensive unit tests: 12 tests, all passing
+- 3 atomic commits: feat (9cfdea6, 67ba4fc), fix (5c8c31e)
+- Created 04-02-SUMMARY.md with self-check verification
+- Status: Plan 02 complete (9 min), Phase 4 now 50% complete (2/4 plans done)
+- Ready for Plan 04-03: Automatic submission logging
+
+### 2026-02-27: Phase 4 Plan 03 Execution
+- Executed 04-03-PLAN.md (Automatic submission logging with hybrid detection)
+- Created volume limiter with calendar day reset at midnight (local timezone), 15 apps/day warning threshold
+- Implemented hybrid submission detection (form submit event + URL change monitoring)
+- Built automatic job metadata extraction (title, company, ATS type)
+- Integrated CAPTCHA blocking (no logging when CAPTCHA present)
+- Implemented duplicate detection with 7-day threshold (warns but doesn't block)
+- Session storage for pending submissions with 10-second timeout
+- Created separate content script for tracker initialization (job-tracker.content.ts)
+- Added jsdom dependency for DOM testing
+- Comprehensive unit tests: 29 tests total (15 volume + 14 submission), all passing
+- Fixed 1 issue: date-dependent test values (changed to date-independent "2026-01-01")
+- 3 atomic commits: feat (fa8c868, 8deac45, c624bc5)
+- Created 04-03-SUMMARY.md with self-check verification
+- Status: Plan 03 complete (4 min), Phase 4 now 75% complete (3/4 plans done)
+- Ready for Plan 04-04: Tracker UI in extension popup
 
 ---
 
