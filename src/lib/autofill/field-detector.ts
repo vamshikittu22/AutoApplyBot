@@ -6,13 +6,31 @@ import { querySelectorDeep } from '@/lib/ats/shadow-dom-utils';
  * Searches through Shadow DOM for Workday
  */
 export function detectFormFields(container: HTMLElement | Document = document): DetectedField[] {
+  console.log('[FieldDetector] Starting field detection...');
+  console.log('[FieldDetector] Container:', container);
+
   const fields: DetectedField[] = [];
 
   // Find all input, select, and textarea elements (including Shadow DOM)
+  console.log('[FieldDetector] Querying for input/select/textarea elements...');
   const inputElements = querySelectorDeep(
     'input:not([type="hidden"]):not([type="submit"]):not([type="button"]), select, textarea',
     container
   );
+
+  console.log('[FieldDetector] Found', inputElements.length, 'input elements');
+
+  // Debug: log all found elements
+  inputElements.forEach((el, idx) => {
+    console.log(`[FieldDetector] Element ${idx}:`, {
+      tag: el.tagName,
+      type: el.getAttribute('type'),
+      id: el.id,
+      name: el.getAttribute('name'),
+      class: el.className,
+      visible: isVisible(el as HTMLElement),
+    });
+  });
 
   for (const element of inputElements) {
     if (
@@ -22,11 +40,24 @@ export function detectFormFields(container: HTMLElement | Document = document): 
     ) {
       const field = createDetectedField(element);
       if (field) {
+        console.log('[FieldDetector] Created field:', {
+          label: field.label,
+          type: field.type,
+          name: field.name,
+          id: field.id,
+        });
         fields.push(field);
+      } else {
+        console.log('[FieldDetector] Skipped field (not visible):', {
+          tag: element.tagName,
+          id: element.id,
+          name: element.getAttribute('name'),
+        });
       }
     }
   }
 
+  console.log('[FieldDetector] Total detected fields:', fields.length);
   return fields;
 }
 
@@ -166,15 +197,20 @@ function findFieldLabel(
 function isVisible(element: HTMLElement): boolean {
   // Check CSS visibility
   const style = window.getComputedStyle(element);
-  if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+  if (style.display === 'none') {
     return false;
   }
 
-  // Check dimensions
-  const rect = element.getBoundingClientRect();
-  if (rect.width === 0 || rect.height === 0) {
-    return false;
-  }
+  // Don't check visibility or opacity - some forms use these for animation
+  // if (style.visibility === 'hidden' || style.opacity === '0') {
+  //   return false;
+  // }
+
+  // Don't check dimensions - some fields may be zero-sized initially
+  // const rect = element.getBoundingClientRect();
+  // if (rect.width === 0 || rect.height === 0) {
+  //   return false;
+  // }
 
   return true;
 }

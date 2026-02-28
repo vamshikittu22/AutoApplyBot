@@ -10,7 +10,8 @@ export function getAllShadowRoots(root: Document | ShadowRoot = document): Shado
   const shadowRoots: ShadowRoot[] = [];
 
   // Find all elements with shadow roots
-  const walker = document.createTreeWalker(root as Node, NodeFilter.SHOW_ELEMENT, null);
+  const ownerDocument = root instanceof Document ? root : root.ownerDocument || document;
+  const walker = ownerDocument.createTreeWalker(root as Node, NodeFilter.SHOW_ELEMENT, null);
 
   let node: Node | null = walker.currentNode;
   while (node) {
