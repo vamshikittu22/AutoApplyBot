@@ -84,10 +84,34 @@ export class AutofillEngine {
     } = options;
 
     console.log('[AutofillEngine] Starting autofill...');
+    console.log('[AutofillEngine] Profile:', this.profile);
+    console.log('[AutofillEngine] ATS Type:', this.atsType);
+    console.log('[AutofillEngine] Container:', container);
 
     // Map fields to profile
     const mappingResult = mapFieldsToProfile(this.profile, container);
-    console.log('[AutofillEngine] Mapped fields:', mappingResult);
+    console.log('[AutofillEngine] Detected fields:', mappingResult.fields.length);
+    console.log(
+      '[AutofillEngine] Field details:',
+      mappingResult.fields.map((f) => ({
+        label: f.label,
+        name: f.name,
+        id: f.id,
+        type: f.type,
+        placeholder: f.placeholder,
+      }))
+    );
+    console.log(
+      '[AutofillEngine] Mappings:',
+      mappingResult.mappings.map((m) => ({
+        label: m.field.label,
+        profileKey: m.profileKey,
+        value: m.value,
+        confidence: m.confidence,
+        shouldFill: m.shouldFill,
+        reason: m.reason,
+      }))
+    );
 
     // Filter mappings to fill (confidence >= threshold, has value)
     const fillableMappings = mappingResult.mappings.filter(
@@ -95,6 +119,15 @@ export class AutofillEngine {
     );
 
     console.log('[AutofillEngine] Fillable fields:', fillableMappings.length);
+    console.log(
+      '[AutofillEngine] Fillable mappings:',
+      fillableMappings.map((m) => ({
+        label: m.field.label,
+        profileKey: m.profileKey,
+        value: m.value?.substring(0, 50),
+        confidence: m.confidence,
+      }))
+    );
 
     const result: AutofillResult = {
       success: true,
