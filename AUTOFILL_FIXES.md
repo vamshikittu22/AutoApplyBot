@@ -98,6 +98,8 @@ Fixed autofill and page detection issues to work like Simplify Jobs extension wi
 - `src/lib/ats/detector.ts` (updated to register new detectors)
 - `src/types/ats.ts` (added new platform types)
 - `src/constants/ats-patterns.ts` (added patterns for new platforms)
+- `src/entrypoints/popup/App.tsx` (added autofill button, current page detection)
+- `src/components/AISettings.tsx` (reduced info icon size from h-5 to h-4)
 
 ## Files Temporarily Disabled
 - `src/entrypoints/ai-suggest.content.ts.disabled` (had broken imports)
@@ -105,8 +107,35 @@ Fixed autofill and page detection issues to work like Simplify Jobs extension wi
 
 These can be re-enabled later by fixing their import paths.
 
+## Popup UI Improvements
+**Modified:** `src/entrypoints/popup/App.tsx`
+- Added `useEffect` to detect current page URL on popup open
+- Added "Autofill This Page" button that appears when on a job application page
+- Button sends message to active tab to trigger autofill
+- Provides alternative way to trigger autofill besides the floating button
+
+**Modified:** `src/components/AISettings.tsx`
+- Reduced info icon size from `h-5 w-5` to `h-4 w-4` for better visual hierarchy
+
+## Build Status
+✅ Extension builds successfully
+✅ All 3 content scripts compiled and registered:
+  - `ats-detector.js` (16.7 kB)
+  - `autofill.js` (53.59 kB) 
+  - `captcha.js` (5.36 kB)
+✅ Manifest.json includes all URL patterns
+✅ Output directory: `.output/chrome-mv3/`
+
 ## Next Steps
-- Test on real job sites
-- Fine-tune detection confidence thresholds
-- Add more platform-specific field selectors
-- Re-enable ai-suggest and job-tracker content scripts
+1. **Manual Testing Required:**
+   - Load extension in Chrome/Edge (`chrome://extensions` → Developer mode → Load unpacked → select `.output/chrome-mv3/`)
+   - Visit job application pages (LinkedIn, Indeed, Glassdoor, company career pages)
+   - Verify autofill button appears automatically after ~500ms
+   - Click button to verify autofill works
+   - Open popup on job page to verify "Autofill This Page" button appears
+   - Verify all icons are properly sized
+
+2. **Optional Future Work:**
+   - Fine-tune detection confidence thresholds based on real-world testing
+   - Add more platform-specific field selectors
+   - Re-enable ai-suggest and job-tracker content scripts (fix broken imports)

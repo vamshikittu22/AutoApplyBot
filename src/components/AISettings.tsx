@@ -396,7 +396,7 @@ export function AISettings() {
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <div className="flex gap-3">
           <svg
-            className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5"
+            className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
