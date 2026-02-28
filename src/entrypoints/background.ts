@@ -19,7 +19,7 @@ async function setupDeclarativeContent() {
   if (!chrome.declarativeContent) {
     console.warn(
       '[AutoApply] chrome.declarativeContent is unavailable. ' +
-        'Ensure "declarativeContent" is listed in manifest permissions.',
+        'Ensure "declarativeContent" is listed in manifest permissions.'
     );
     return;
   }
@@ -27,27 +27,15 @@ async function setupDeclarativeContent() {
   // Remove existing rules
   await chrome.declarativeContent.onPageChanged.removeRules();
 
-  // Define ATS URL patterns from constants
-  const atsUrlPatterns = [
-    // Workday
-    '*://*/myworkdayjobs/*',
-    '*://*/myworkday.com/*',
-    '*://*.myworkdayjobs.com/*',
-    '*://*.myworkday.com/*',
-    // Greenhouse
-    '*://boards.greenhouse.io/*',
-    '*://*.greenhouse.io/*',
-    '*://*/embed/job_app*',
-    // Lever
-    '*://jobs.lever.co/*',
-    '*://*.lever.co/*',
-    '*://*/apply/*',
-  ];
+  // Define ATS URL regex patterns
+  // Note: urlMatches expects a REGEX pattern, not URL match patterns
+  const atsUrlRegex =
+    '(myworkdayjobs|myworkday\\.com|greenhouse\\.io|lever\\.co|/apply/|/careers/|/jobs/|/application/)';
 
   // Create page state matcher for ATS URLs
   const atsPageStateMatcher = {
     pageUrl: {
-      urlMatches: atsUrlPatterns.join('|'),
+      urlMatches: atsUrlRegex,
     },
   };
 
