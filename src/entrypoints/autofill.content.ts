@@ -38,6 +38,110 @@ export default defineContentScript({
     console.log('[Autofill] Content script loaded on:', window.location.href);
 
     let buttonContainer: HTMLElement | null = null;
+    let currentDetection: DetectionResult | null = null;
+
+    /**
+     * Trigger autofill programmatically
+     */
+    async function triggerAutofill() {
+      console.log('[Autofill] Triggered programmatically');
+
+      if (buttonContainer) {
+        // Simulate button click
+        buttonContainer.click();
+      } else {
+        // If button not visible, run autofill directly
+        const detection = currentDetection || (await detectATS(window.location.href, document));
+        await performAutofill(detection);
+      }
+    }
+
+    /**
+     * Perform the actual autofill logic
+     */
+    async function performAutofill(detection: DetectionResult) {
+      console.log('[Autofill] Performing autofill for:', detection);
+
+      // Check if job is disabled
+      const disabled = await isJobDisabled(window.location.href);
+      if (disabled) {
+        console.log('[Autofill] Job is disabled');
+        return;
+      }
+
+      // Get profile
+      const { profile } = await chrome.storage.local.get('profile');
+      if (!profile) {
+        console.log('[Autofill] No profile found');
+        alert('Please set up your profile first in the extension settings.');
+        return;
+      }
+
+      // Find form container
+      const containers = detection.platform ? findFormContainers(detection.platform, document) : [];
+
+      // Fallback to generic form detection
+      const formContainer =
+        containers[0] || document.querySelector('form') || document.querySelector('[role="form"]');
+
+      if (!formContainer) {
+        console.log('[Autofill] No form container found');
+        alert('No form found on this page.');
+        return;
+      }
+
+      try {
+        // Import and run autofill dynamically
+        const { AutofillEngine } = await import('@/lib/autofill/engine');
+        const { decorateField, clearAllDecorations } = await import('@/lib/ui/field-decorator');
+
+        const engine = new AutofillEngine();
+        engine.setProfile(profile);
+        if (detection.platform) {
+          engine.setATSType(detection.platform);
+        }
+
+        clearAllDecorations();
+
+        const result = await engine.autofill({
+          container: formContainer as HTMLElement,
+          onFieldFilled: (mapping) => {
+            decorateField(mapping, () => {
+              engine.undoField(mapping.field.element);
+            });
+          },
+        });
+
+        console.log('[Autofill] Success - filled', result.filledCount, 'fields');
+
+        // Show success notification
+        const notification = document.createElement('div');
+        Object.assign(notification.style, {
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: '999999',
+          background: '#10b981',
+          color: 'white',
+          padding: '16px 24px',
+          borderRadius: '12px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          fontSize: '14px',
+          fontWeight: '600',
+        });
+        notification.innerHTML = `✓ Filled ${result.filledCount} fields`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => notification.remove(), 3000);
+
+        return result;
+      } catch (error) {
+        console.error('[Autofill] Error:', error);
+        alert('Autofill failed. Please check the console for details.');
+        throw error;
+      }
+    }
 
     /**
      * Create and inject autofill button
@@ -138,26 +242,7 @@ export default defineContentScript({
         }
 
         try {
-          // Import and run autofill dynamically
-          const { AutofillEngine } = await import('@/lib/autofill/engine');
-          const { decorateField, clearAllDecorations } = await import('@/lib/ui/field-decorator');
-
-          const engine = new AutofillEngine();
-          engine.setProfile(profile);
-          if (detection.platform) {
-            engine.setATSType(detection.platform);
-          }
-
-          clearAllDecorations();
-
-          const result = await engine.autofill({
-            container: formContainer as HTMLElement,
-            onFieldFilled: (mapping) => {
-              decorateField(mapping, () => {
-                engine.undoField(mapping.field.element);
-              });
-            },
-          });
+          const result = await performAutofill(detection);
 
           // Success
           buttonContainer!.style.background = '#10b981';
@@ -165,7 +250,7 @@ export default defineContentScript({
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M7 10L9 12L13 8M19 10C19 14.9706 14.9706 19 10 19C5.02944 19 1 14.9706 1 10C1 5.02944 5.02944 1 10 1C14.9706 1 19 5.02944 19 10Z" stroke="white" stroke-width="2"/>
             </svg>
-            <span>✓ Filled ${result.filledCount} fields</span>
+            <span>✓ Filled ${result?.filledCount || 0} fields</span>
           `;
 
           setTimeout(() => {
@@ -226,6 +311,7 @@ export default defineContentScript({
 
       // Run detection
       const detection = await detectATS(window.location.href, document);
+      currentDetection = detection;
       console.log('[Autofill] Detection result:', detection);
 
       // Check if we should show the button
@@ -274,6 +360,23 @@ export default defineContentScript({
     observer.observe(document.body, {
       childList: true,
       subtree: true,
+    });
+
+    // Listen for messages from popup
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      console.log('[Autofill] Received message:', message);
+
+      if (message.type === 'TRIGGER_AUTOFILL') {
+        triggerAutofill()
+          .then(() => {
+            sendResponse({ success: true });
+          })
+          .catch((error) => {
+            console.error('[Autofill] Failed to trigger autofill:', error);
+            sendResponse({ success: false, error: error.message });
+          });
+        return true; // Keep channel open for async response
+      }
     });
 
     // Cleanup on invalidation
