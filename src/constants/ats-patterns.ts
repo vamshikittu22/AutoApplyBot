@@ -4,13 +4,15 @@ import type { ATSType } from '@/types/ats';
  * URL patterns for ATS detection
  * Each pattern includes host, path, and query indicators
  */
-export const ATS_URL_PATTERNS: Record<
-  ATSType,
-  {
-    hosts: string[];
-    paths: string[];
-    queryParams?: string[];
-  }
+export const ATS_URL_PATTERNS: Partial<
+  Record<
+    ATSType,
+    {
+      hosts: string[];
+      paths: string[];
+      queryParams?: string[];
+    }
+  >
 > = {
   workday: {
     hosts: ['myworkday.com', 'myworkdayjobs.com'],
@@ -25,19 +27,37 @@ export const ATS_URL_PATTERNS: Record<
     hosts: ['lever.co', 'jobs.lever.co'],
     paths: ['/apply/', '/application/'],
   },
+  linkedin: {
+    hosts: ['linkedin.com'],
+    paths: ['/jobs/', '/jobs/view/'],
+  },
+  indeed: {
+    hosts: ['indeed.com'],
+    paths: ['/viewjob', '/rc/clk', '/apply'],
+  },
+  glassdoor: {
+    hosts: ['glassdoor.com'],
+    paths: ['/job-listing', '/partner/jobListing'],
+  },
+  generic: {
+    hosts: [],
+    paths: ['/apply', '/application', '/careers', '/jobs'],
+  },
 };
 
 /**
  * DOM signatures for ATS detection
  * CSS selectors that uniquely identify each platform
  */
-export const ATS_DOM_SIGNATURES: Record<
-  ATSType,
-  {
-    containers: string[];
-    markers: string[];
-    negativeMarkers?: string[];
-  }
+export const ATS_DOM_SIGNATURES: Partial<
+  Record<
+    ATSType,
+    {
+      containers: string[];
+      markers: string[];
+      negativeMarkers?: string[];
+    }
+  >
 > = {
   workday: {
     containers: [
@@ -65,12 +85,14 @@ export const ATS_DOM_SIGNATURES: Record<
 /**
  * Data attribute patterns for detection
  */
-export const ATS_DATA_ATTRIBUTES: Record<
-  ATSType,
-  {
-    attributes: string[];
-    values?: Record<string, string | RegExp>;
-  }
+export const ATS_DATA_ATTRIBUTES: Partial<
+  Record<
+    ATSType,
+    {
+      attributes: string[];
+      values?: Record<string, string | RegExp>;
+    }
+  >
 > = {
   workday: {
     attributes: ['data-automation-id', 'data-wd-app'],

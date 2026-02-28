@@ -9,10 +9,17 @@
  */
 
 /**
- * Supported ATS platform identifiers (v1 only).
- * LinkedIn/Indeed/Ashby deferred to v2.
+ * Supported ATS platform identifiers.
+ * Now includes LinkedIn, Indeed, Glassdoor for universal job application support.
  */
-export type ATSPlatform = 'workday' | 'greenhouse' | 'lever';
+export type ATSPlatform =
+  | 'workday'
+  | 'greenhouse'
+  | 'lever'
+  | 'linkedin'
+  | 'indeed'
+  | 'glassdoor'
+  | 'generic';
 
 /**
  * Supported ATS platforms (alias for consistency)

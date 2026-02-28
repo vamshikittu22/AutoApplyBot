@@ -2,11 +2,24 @@ import type { DetectionResult, ATSDetector, ATSType } from '@/types/ats';
 import { workdayDetector } from './workday';
 import { greenhouseDetector } from './greenhouse';
 import { leverDetector } from './lever';
+import { linkedinDetector } from './linkedin';
+import { indeedDetector } from './indeed';
+import { glassdoorDetector } from './glassdoor';
+import { genericDetector } from './generic';
 
 /**
  * All registered ATS detectors
+ * Order matters: specific platforms first, generic last
  */
-const detectors: ATSDetector[] = [workdayDetector, greenhouseDetector, leverDetector];
+const detectors: ATSDetector[] = [
+  workdayDetector,
+  greenhouseDetector,
+  leverDetector,
+  linkedinDetector,
+  indeedDetector,
+  glassdoorDetector,
+  genericDetector,
+];
 
 /**
  * Detect ATS platform on current page
@@ -58,4 +71,12 @@ export function findFormContainers(platform: ATSType, document: Document): HTMLE
 /**
  * Export all detectors for testing
  */
-export { workdayDetector, greenhouseDetector, leverDetector };
+export {
+  workdayDetector,
+  greenhouseDetector,
+  leverDetector,
+  linkedinDetector,
+  indeedDetector,
+  glassdoorDetector,
+  genericDetector,
+};
