@@ -77,16 +77,69 @@ export default defineContentScript({
         return;
       }
 
-      // Find form container
-      const containers = detection.platform ? findFormContainers(detection.platform, document) : [];
+      // Find form container with multiple fallback strategies
+      let formContainer: HTMLElement | null = null;
 
-      // Fallback to generic form detection
-      const formContainer =
-        containers[0] || document.querySelector('form') || document.querySelector('[role="form"]');
+      // Strategy 1: Use platform-specific detector
+      if (detection.platform) {
+        const containers = findFormContainers(detection.platform, document);
+        formContainer = containers[0] || null;
+        if (formContainer) {
+          console.log('[Autofill] Found form using platform detector:', detection.platform);
+        }
+      }
+
+      // Strategy 2: Look for standard form elements
+      if (!formContainer) {
+        formContainer = document.querySelector('form') as HTMLElement;
+        if (formContainer) {
+          console.log('[Autofill] Found standard <form> element');
+        }
+      }
+
+      // Strategy 3: Look for forms with role="form"
+      if (!formContainer) {
+        formContainer = document.querySelector('[role="form"]') as HTMLElement;
+        if (formContainer) {
+          console.log('[Autofill] Found element with role="form"');
+        }
+      }
+
+      // Strategy 4: Look for common job application containers
+      if (!formContainer) {
+        const selectors = [
+          '[data-automation-id="jobApplicationContainer"]',
+          '[data-automation-id="applicationContainer"]',
+          '[data-automation-id="jobRequisition"]',
+          '.application-form',
+          '.job-application',
+          '#application',
+          '#job-apply',
+          'main',
+        ];
+
+        for (const selector of selectors) {
+          const el = document.querySelector(selector) as HTMLElement;
+          if (el && el.querySelector('input, textarea, select')) {
+            formContainer = el;
+            console.log('[Autofill] Found form container using selector:', selector);
+            break;
+          }
+        }
+      }
+
+      // Strategy 5: Use document.body as last resort if there are input fields
+      if (!formContainer) {
+        const hasInputs = document.querySelectorAll('input, textarea, select').length > 0;
+        if (hasInputs) {
+          formContainer = document.body;
+          console.log('[Autofill] Using document.body as container (found input fields)');
+        }
+      }
 
       if (!formContainer) {
-        console.log('[Autofill] No form container found');
-        alert('No form found on this page.');
+        console.log('[Autofill] No form container found after all strategies');
+        alert('No form found on this page. Please make sure you are on a job application page.');
         return;
       }
 
@@ -163,15 +216,16 @@ export default defineContentScript({
         return;
       }
 
-      // Find form container
-      const containers = detection.platform ? findFormContainers(detection.platform, document) : [];
+      // Check if page has any form-like elements (for button visibility)
+      // We use a lenient check here - actual form finding happens in performAutofill
+      const hasFormElements =
+        document.querySelector('form') !== null ||
+        document.querySelector('[role="form"]') !== null ||
+        document.querySelector('input[type="text"], input[type="email"], textarea') !== null ||
+        document.querySelector('[data-automation-id*="form"]') !== null;
 
-      // Fallback to generic form detection
-      const formContainer =
-        containers[0] || document.querySelector('form') || document.querySelector('[role="form"]');
-
-      if (!formContainer) {
-        console.log('[Autofill] No form container found');
+      if (!hasFormElements) {
+        console.log('[Autofill] No form elements found on page');
         return;
       }
 
