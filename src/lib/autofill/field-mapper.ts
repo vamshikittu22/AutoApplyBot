@@ -100,6 +100,55 @@ function mapSingleField(field: DetectedField, profile: Profile): FieldMapping {
  * Examples: 'personal.email', 'workHistory.position', 'skills'
  */
 function getProfileValue(profile: Profile, path: ProfileFieldPath): string | null {
+  // Special handling for virtual fields derived from other profile fields
+
+  // Parse firstName from personal.name (first word)
+  if (path === 'personal.firstName') {
+    const fullName = profile.personal?.name;
+    if (!fullName) return null;
+    const nameParts = fullName.trim().split(/\s+/);
+    return nameParts[0] || null;
+  }
+
+  // Parse lastName from personal.name (everything after first word)
+  if (path === 'personal.lastName') {
+    const fullName = profile.personal?.name;
+    if (!fullName) return null;
+    const nameParts = fullName.trim().split(/\s+/);
+    return nameParts.length > 1 ? nameParts.slice(1).join(' ') : null;
+  }
+
+  // Parse city from personal.location (before comma)
+  if (path === 'personal.city') {
+    const location = profile.personal?.location;
+    if (!location) return null;
+    const parts = location.split(',').map((s) => s.trim());
+    return parts[0] || null;
+  }
+
+  // Parse state from personal.location (after comma)
+  if (path === 'personal.state') {
+    const location = profile.personal?.location;
+    if (!location) return null;
+    const parts = location.split(',').map((s) => s.trim());
+    return parts[1] || null;
+  }
+
+  // Parse country (if location has 3 parts: City, State, Country)
+  if (path === 'personal.country') {
+    const location = profile.personal?.location;
+    if (!location) return null;
+    const parts = location.split(',').map((s) => s.trim());
+    return parts[2] || 'United States'; // Default to US if not specified
+  }
+
+  // Parse zipCode - not in profile, return null (user will need to enter manually)
+  if (path === 'personal.zipCode') {
+    // zipCode is not stored in profile.personal, so return null
+    // Forms can highlight this for manual entry
+    return null;
+  }
+
   // Handle nested paths (e.g., 'personal.email')
   const parts = path.split('.');
   let current: any = profile;

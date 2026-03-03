@@ -5,7 +5,9 @@
  */
 export const FIELD_KEYWORDS: Record<string, string[]> = {
   // Personal info (nested under Profile.personal)
-  'personal.name': ['full name', 'name', 'legal name', 'your name'],
+  'personal.name': ['full name', 'legal name', 'your name', 'applicant name'],
+  'personal.firstName': ['first name', 'given name', 'fname'],
+  'personal.lastName': ['last name', 'surname', 'family name', 'lname'],
   'personal.email': ['email', 'e-mail', 'email address', 'contact email', 'your email', 'mail'],
   'personal.phone': [
     'phone',
@@ -15,14 +17,33 @@ export const FIELD_KEYWORDS: Record<string, string[]> = {
     'phone number',
     'contact number',
     'your phone',
+    'mobile number',
+    'cell phone',
   ],
-  'personal.location': ['location', 'city', 'address', 'where are you based', 'current location'],
+  'personal.location': [
+    'location',
+    'full address',
+    'complete address',
+    'where are you based',
+    'current location',
+    'city/state',
+    'city and state',
+    'city & state',
+    'residence',
+    'home location',
+  ],
+  'personal.city': ['city', 'town', 'municipality'],
+  'personal.state': ['state', 'province', 'region'],
+  'personal.country': ['country'],
+  'personal.zipCode': ['zip', 'zip code', 'postal code', 'postcode'],
   'personal.workAuthorization': [
     'work authorization',
     'visa status',
     'sponsorship',
     'authorized to work',
     'work permit',
+    'require sponsorship',
+    'us authorized',
   ],
 
   // Links (nested under Profile.links)
