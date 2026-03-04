@@ -16,8 +16,10 @@ import type { Profile } from './profile';
  * - mock: Hardcoded responses for development/testing
  * - openai: OpenAI GPT models (user provides API key)
  * - anthropic: Anthropic Claude models (user provides API key)
+ * - gemini: Google Gemini models (user provides API key)
+ * - groq: Groq fast inference (user provides API key)
  */
-export type AIProvider = 'mock' | 'openai' | 'anthropic';
+export type AIProvider = 'mock' | 'openai' | 'anthropic' | 'gemini' | 'groq';
 
 /**
  * Tone variants for answer generation
@@ -83,10 +85,18 @@ export type AIConfig = {
   openaiKey?: string;
   /** Anthropic API key (encrypted in storage) */
   anthropicKey?: string;
+  /** Gemini API key (encrypted in storage) */
+  geminiKey?: string;
+  /** Groq API key (encrypted in storage) */
+  groqKey?: string;
   /** Unix timestamp when OpenAI key was last validated */
   openaiValidatedAt?: number;
   /** Unix timestamp when Anthropic key was last validated */
   anthropicValidatedAt?: number;
+  /** Unix timestamp when Gemini key was last validated */
+  geminiValidatedAt?: number;
+  /** Unix timestamp when Groq key was last validated */
+  groqValidatedAt?: number;
   /** Last successfully used provider */
   lastUsedProvider?: AIProvider;
 };

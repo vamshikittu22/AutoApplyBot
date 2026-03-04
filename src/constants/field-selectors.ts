@@ -26,12 +26,13 @@ export const FIELD_KEYWORDS: Record<string, string[]> = {
     'complete address',
     'where are you based',
     'current location',
-    'city/state',
-    'city and state',
-    'city & state',
     'residence',
     'home location',
   ],
+  'personal.addressLine1': ['address line 1', 'street address', 'street', 'address 1', 'primary address'],
+  'personal.phoneDeviceType': ['phone device type', 'phone type', 'device type'],
+  'application.source': ['how did you hear about us', 'source', 'where did you hear about us'],
+  'application.employedBefore': ['have you ever been employed by', 'previously employed', 'worked here before', 'former employee'],
   'personal.city': ['city', 'town', 'municipality'],
   'personal.state': ['state', 'province', 'region'],
   'personal.country': ['country'],
@@ -134,6 +135,8 @@ export const FIELD_PATTERNS: Record<string, RegExp> = {
   title: /(title|position|role)/i,
   skills: /skills|competenc/i,
   address: /address|street/i,
+  source: /(source|hear about)/i,
+  employedBefore: /(employed|worked before)/i,
 };
 
 /**

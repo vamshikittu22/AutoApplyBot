@@ -92,12 +92,27 @@ function setInputValue(element: HTMLInputElement, value: string, type: FieldType
       element.checked = value === 'true' || value === '1';
       return true;
 
-    case 'radio':
-      if (element.value === value) {
+    case 'radio': {
+      const targetVal = value.toLowerCase();
+      // Match by exact value
+      if (element.value.toLowerCase() === targetVal) {
+        element.checked = true;
+        return true;
+      }
+      // Match by label text
+      const labelText = element.labels?.[0]?.textContent?.trim().toLowerCase();
+      if (labelText && labelText.includes(targetVal)) {
+        element.checked = true;
+        return true;
+      }
+      // Match by parent label text
+      const parentText = element.closest('label')?.textContent?.trim().toLowerCase();
+      if (parentText && parentText.includes(targetVal)) {
         element.checked = true;
         return true;
       }
       return false;
+    }
 
     case 'file':
       // Cannot programmatically set file inputs

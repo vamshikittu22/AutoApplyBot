@@ -73,6 +73,15 @@ export function fuzzyMatch(
   const keywords = FIELD_KEYWORDS[profilePath];
   if (!keywords || keywords.length === 0) return null;
 
+  const lowerFieldText = fieldText.toLowerCase();
+
+  // Try exact substring match first (critical for long labels like Workday radio buttons)
+  for (const keyword of keywords) {
+    if (lowerFieldText.includes(keyword.toLowerCase())) {
+      return { score: 1.0, keyword };
+    }
+  }
+
   // Create Fuse instance for fuzzy searching
   const fuse = new Fuse(keywords, {
     includeScore: true,

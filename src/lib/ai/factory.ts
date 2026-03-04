@@ -1,8 +1,10 @@
-import type { IAIProvider } from '@/types/ai';
+import type { IAIProvider, AIProvider } from '@/types/ai';
 import { getAIConfig, getAPIKey } from './config';
 import { MockProvider } from './providers/mock';
 import { OpenAIProvider } from './providers/openai';
 import { AnthropicProvider } from './providers/anthropic';
+import { GeminiProvider } from './providers/gemini';
+import { GroqProvider } from './providers/groq';
 
 /**
  * Get the appropriate AI provider based on current configuration
@@ -30,6 +32,24 @@ export async function getAIProvider(): Promise<IAIProvider> {
       return new AnthropicProvider(apiKey);
     }
 
+    case 'gemini': {
+      const apiKey = await getAPIKey('gemini');
+      if (!apiKey) {
+        console.warn('Gemini provider selected but no API key found. Falling back to mock.');
+        return new MockProvider();
+      }
+      return new GeminiProvider(apiKey);
+    }
+
+    case 'groq': {
+      const apiKey = await getAPIKey('groq');
+      if (!apiKey) {
+        console.warn('Groq provider selected but no API key found. Falling back to mock.');
+        return new MockProvider();
+      }
+      return new GroqProvider(apiKey);
+    }
+
     case 'mock':
     default:
       return new MockProvider();
@@ -40,7 +60,7 @@ export async function getAIProvider(): Promise<IAIProvider> {
  * Create provider instance for validation (doesn't save to config)
  */
 export async function createProviderForValidation(
-  provider: 'openai' | 'anthropic',
+  provider: Exclude<AIProvider, 'mock'>,
   apiKey: string
 ): Promise<IAIProvider> {
   switch (provider) {
@@ -49,6 +69,12 @@ export async function createProviderForValidation(
 
     case 'anthropic':
       return new AnthropicProvider(apiKey);
+
+    case 'gemini':
+      return new GeminiProvider(apiKey);
+
+    case 'groq':
+      return new GroqProvider(apiKey);
 
     default:
       throw new Error(`Unknown provider: ${provider}`);

@@ -101,6 +101,38 @@ function mapSingleField(field: DetectedField, profile: Profile): FieldMapping {
  */
 function getProfileValue(profile: Profile, path: ProfileFieldPath): string | null {
   // Special handling for virtual fields derived from other profile fields
+  
+  // Workday ATS specific constraints
+  if (path === 'personal.addressLine1') {
+    const loc = profile.personal?.location;
+    if (!loc) return null;
+    const parts = loc.split(',').map((s) => s.trim());
+    if (parts.length >= 4) return parts.slice(0, parts.length - 3).join(', ');
+    return 'Not Provided';
+  }
+  if (path === 'personal.phoneDeviceType') return 'Mobile';
+  if (path === 'application.source') return 'LinkedIn';
+  if (path === 'application.employedBefore') return 'No';
+
+  // Format phone number to strip +1 and non-digits
+  if (path === 'personal.phone') {
+    let phone = profile.personal?.phone;
+    if (!phone) return null;
+    
+    // basic cleanup of formatting 
+    phone = phone.replace(/[\s\-\(\)]/g, '');
+    
+    // Workday and ATS specific: remove leading +1 for US numbers if it's 12 digits,
+    // as country codes are usually selected in a separate dropdown.
+    if (phone.startsWith('+1') && phone.length === 12) {
+      return phone.substring(2);
+    }
+    if (phone.startsWith('1') && phone.length === 11) {
+      return phone.substring(1);
+    }
+    
+    return phone.replace(/^\+/, '');
+  }
 
   // Parse firstName from personal.name (first word)
   if (path === 'personal.firstName') {
@@ -118,34 +150,40 @@ function getProfileValue(profile: Profile, path: ProfileFieldPath): string | nul
     return nameParts.length > 1 ? nameParts.slice(1).join(' ') : null;
   }
 
-  // Parse city from personal.location (before comma)
+  // Parse city from personal.location
   if (path === 'personal.city') {
-    const location = profile.personal?.location;
-    if (!location) return null;
-    const parts = location.split(',').map((s) => s.trim());
+    const loc = profile.personal?.location;
+    if (!loc) return null;
+    const parts = loc.split(',').map((s) => s.trim());
+    if (parts.length >= 3) return parts[parts.length - 3] || null;
     return parts[0] || null;
   }
 
-  // Parse state from personal.location (after comma)
+  // Parse state from personal.location
   if (path === 'personal.state') {
-    const location = profile.personal?.location;
-    if (!location) return null;
-    const parts = location.split(',').map((s) => s.trim());
-    return parts[1] || null;
+    const loc = profile.personal?.location;
+    if (!loc) return null;
+    const parts = loc.split(',').map((s) => s.trim());
+    if (parts.length >= 2) return parts[parts.length - 2] || null;
+    return null;
   }
 
-  // Parse country (if location has 3 parts: City, State, Country)
+  // Parse country (if location has at least 3 parts, we might not have country unless 4, but Workday often groups it or defaults)
   if (path === 'personal.country') {
-    const location = profile.personal?.location;
-    if (!location) return null;
-    const parts = location.split(',').map((s) => s.trim());
-    return parts[2] || 'United States'; // Default to US if not specified
+    const loc = profile.personal?.location;
+    if (!loc) return null;
+    // Most users don't type Country if they type City, State, Zip. Default to US.
+    return 'United States';
   }
 
-  // Parse zipCode - not in profile, return null (user will need to enter manually)
+  // Parse zipCode
   if (path === 'personal.zipCode') {
-    // zipCode is not stored in profile.personal, so return null
-    // Forms can highlight this for manual entry
+    const loc = profile.personal?.location;
+    if (!loc) return null;
+    const parts = loc.split(',').map((s) => s.trim());
+    const lastPart = parts[parts.length - 1];
+    if (lastPart && /\d/.test(lastPart)) return lastPart;
+    if (parts.length >= 3) return parts[parts.length - 1] || null;
     return null;
   }
 

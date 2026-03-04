@@ -93,7 +93,7 @@ export function DraftSelector({ result, onInsert, onRegenerate, onClose }: Draft
               <p className="font-medium text-blue-900 mb-1">
                 {result.provider === 'mock'
                   ? '⚠️ Mock AI Mode'
-                  : `✓ Powered by ${result.provider === 'openai' ? 'OpenAI GPT-4o' : 'Anthropic Claude'}`}
+                  : `✓ Powered by ${result.provider === 'openai' ? 'OpenAI GPT-4o' : result.provider === 'anthropic' ? 'Anthropic Claude' : result.provider === 'gemini' ? 'Google Gemini' : 'Groq LLaMA'}`}
               </p>
               <p>
                 {result.provider === 'mock'

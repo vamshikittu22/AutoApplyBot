@@ -43,7 +43,7 @@ export async function setAIProvider(provider: AIProvider): Promise<void> {
  * Keys are encrypted before storage using AES-256-GCM
  */
 export async function saveAPIKey(
-  provider: 'openai' | 'anthropic',
+  provider: Exclude<AIProvider, 'mock'>,
   apiKey: string,
   validatedAt: number
 ): Promise<void> {
@@ -55,9 +55,15 @@ export async function saveAPIKey(
   if (provider === 'openai') {
     config.openaiKey = encryptedKey;
     config.openaiValidatedAt = validatedAt;
-  } else {
+  } else if (provider === 'anthropic') {
     config.anthropicKey = encryptedKey;
     config.anthropicValidatedAt = validatedAt;
+  } else if (provider === 'gemini') {
+    config.geminiKey = encryptedKey;
+    config.geminiValidatedAt = validatedAt;
+  } else if (provider === 'groq') {
+    config.groqKey = encryptedKey;
+    config.groqValidatedAt = validatedAt;
   }
 
   await chrome.storage.local.set({ [STORAGE_KEY]: config });
@@ -67,15 +73,21 @@ export async function saveAPIKey(
  * Clear API key for a provider
  * If the provider was active, switches to mock
  */
-export async function clearAPIKey(provider: 'openai' | 'anthropic'): Promise<void> {
+export async function clearAPIKey(provider: Exclude<AIProvider, 'mock'>): Promise<void> {
   const config = await getAIConfig();
 
   if (provider === 'openai') {
     delete config.openaiKey;
     delete config.openaiValidatedAt;
-  } else {
+  } else if (provider === 'anthropic') {
     delete config.anthropicKey;
     delete config.anthropicValidatedAt;
+  } else if (provider === 'gemini') {
+    delete config.geminiKey;
+    delete config.geminiValidatedAt;
+  } else if (provider === 'groq') {
+    delete config.groqKey;
+    delete config.groqValidatedAt;
   }
 
   // If this was the active provider, switch to mock
@@ -94,9 +106,14 @@ export async function clearAPIKey(provider: 'openai' | 'anthropic'): Promise<voi
  * Note: Plain-text keys from pre-encryption versions will fail decryption
  * and return null (user must re-enter key - acceptable migration path for v1)
  */
-export async function getAPIKey(provider: 'openai' | 'anthropic'): Promise<string | null> {
+export async function getAPIKey(provider: Exclude<AIProvider, 'mock'>): Promise<string | null> {
   const config = await getAIConfig();
-  const encryptedKey = provider === 'openai' ? config.openaiKey : config.anthropicKey;
+  
+  let encryptedKey;
+  if (provider === 'openai') encryptedKey = config.openaiKey;
+  else if (provider === 'anthropic') encryptedKey = config.anthropicKey;
+  else if (provider === 'gemini') encryptedKey = config.geminiKey;
+  else if (provider === 'groq') encryptedKey = config.groqKey;
 
   if (!encryptedKey) return null;
 
@@ -113,14 +130,19 @@ export async function getAPIKey(provider: 'openai' | 'anthropic'): Promise<strin
 /**
  * Check if a provider has a valid API key
  */
-export async function hasValidKey(provider: 'openai' | 'anthropic'): Promise<boolean> {
+export async function hasValidKey(provider: Exclude<AIProvider, 'mock'>): Promise<boolean> {
   const config = await getAIConfig();
 
   if (provider === 'openai') {
     return !!(config.openaiKey && config.openaiValidatedAt);
-  } else {
+  } else if (provider === 'anthropic') {
     return !!(config.anthropicKey && config.anthropicValidatedAt);
+  } else if (provider === 'gemini') {
+    return !!(config.geminiKey && config.geminiValidatedAt);
+  } else if (provider === 'groq') {
+    return !!(config.groqKey && config.groqValidatedAt);
   }
+  return false;
 }
 
 /**
@@ -162,6 +184,28 @@ export async function getAIProvider(): Promise<IAIProvider> {
       return new AnthropicProvider(apiKey);
     }
 
+    case 'gemini': {
+      const apiKey = await getAPIKey('gemini');
+      if (!apiKey) {
+        console.warn('Gemini provider selected but no API key found. Falling back to mock.');
+        const { MockProvider } = await import('./providers/mock');
+        return new MockProvider();
+      }
+      const { GeminiProvider } = await import('./providers/gemini');
+      return new GeminiProvider(apiKey);
+    }
+
+    case 'groq': {
+      const apiKey = await getAPIKey('groq');
+      if (!apiKey) {
+        console.warn('Groq provider selected but no API key found. Falling back to mock.');
+        const { MockProvider } = await import('./providers/mock');
+        return new MockProvider();
+      }
+      const { GroqProvider } = await import('./providers/groq');
+      return new GroqProvider(apiKey);
+    }
+
     case 'mock':
     default: {
       const { MockProvider } = await import('./providers/mock');
@@ -185,6 +229,12 @@ export async function createProviderForValidation(
   } else if (provider === 'anthropic') {
     const { AnthropicProvider } = await import('./providers/anthropic');
     return new AnthropicProvider(apiKey);
+  } else if (provider === 'gemini') {
+    const { GeminiProvider } = await import('./providers/gemini');
+    return new GeminiProvider(apiKey);
+  } else if (provider === 'groq') {
+    const { GroqProvider } = await import('./providers/groq');
+    return new GroqProvider(apiKey);
   } else {
     const { MockProvider } = await import('./providers/mock');
     return new MockProvider();
@@ -203,5 +253,7 @@ export async function exportAIConfig(): Promise<Partial<AIConfig>> {
     lastUsedProvider: config.lastUsedProvider,
     openaiValidatedAt: config.openaiValidatedAt,
     anthropicValidatedAt: config.anthropicValidatedAt,
+    geminiValidatedAt: config.geminiValidatedAt,
+    groqValidatedAt: config.groqValidatedAt,
   };
 }

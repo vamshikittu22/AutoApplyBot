@@ -17,6 +17,8 @@ export function SuggestAnswerButton({
     mock: { text: 'Mock AI', color: 'bg-gray-500' },
     openai: { text: 'GPT-4o', color: 'bg-green-600' },
     anthropic: { text: 'Claude', color: 'bg-purple-600' },
+    gemini: { text: 'Gemini', color: 'bg-blue-600' },
+    groq: { text: 'Groq', color: 'bg-orange-600' },
   }[activeProvider];
 
   return (
