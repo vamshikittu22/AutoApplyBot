@@ -1,3 +1,10 @@
+/**
+ * AISettings Component — Redesigned with Taylor-inspired layout
+ *
+ * Clean section cards with accent borders, radio cards for provider selection,
+ * and consistent form styling matching the design system.
+ */
+
 import { useState, useEffect } from 'react';
 import {
   getAIConfig,
@@ -22,7 +29,6 @@ export function AISettings() {
   const [hasOpenAIKey, setHasOpenAIKey] = useState(false);
   const [hasAnthropicKey, setHasAnthropicKey] = useState(false);
 
-  // Load config on mount
   useEffect(() => {
     loadConfig();
   }, []);
@@ -60,13 +66,11 @@ export function AISettings() {
       const isValid = await provider.validateKey!(openaiKey);
 
       if (isValid) {
-        // Save key
         await saveAPIKey('openai', openaiKey, Date.now());
         setOpenaiValidation('success');
-        setOpenaiKey(''); // Clear input
+        setOpenaiKey('');
         setHasOpenAIKey(true);
 
-        // Auto-select OpenAI if no provider selected
         if (config?.provider === 'mock') {
           await setAIProvider('openai');
           await loadConfig();
@@ -125,7 +129,6 @@ export function AISettings() {
   };
 
   const handleProviderChange = async (provider: AIProvider) => {
-    // Check if provider has valid key
     if (provider === 'openai' && !hasOpenAIKey) {
       alert('Please add and validate an OpenAI API key first');
       return;
@@ -159,109 +162,128 @@ export function AISettings() {
   };
 
   if (!config) {
-    return <div className="text-gray-500">Loading...</div>;
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem' }}>
+        <div className="spinner" />
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">AI Configuration</h2>
-        <p className="text-sm text-gray-600">
-          Configure AI providers for answer suggestions. Mock AI is free but uses templates. Add
-          your API key for real AI-generated answers.
-        </p>
-      </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-      {/* Provider Selection */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <h3 className="text-sm font-medium text-gray-900 mb-3">Active Provider</h3>
+      {/* ── Active Provider ──────────────────────────────────── */}
+      <div className="content-card animate-in">
+        <div className="section-header">
+          <h3>Active Provider</h3>
+        </div>
 
-        <div className="space-y-2">
+        <div className="tip-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+          </svg>
+          Choose your AI provider for intelligent answer suggestions during job applications.
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
           {/* Mock AI */}
-          <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+          <label className={`radio-card ${config.provider === 'mock' ? 'selected' : ''}`}>
             <input
               type="radio"
               name="provider"
-              value="mock"
               checked={config.provider === 'mock'}
               onChange={() => handleProviderChange('mock')}
-              className="h-4 w-4 text-blue-600"
+              style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }}
             />
-            <div className="flex-1">
-              <div className="font-medium text-gray-900">Mock AI (Free)</div>
-              <div className="text-xs text-gray-500">
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text)' }}>Mock AI (Free)</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                 Template-based suggestions with placeholders
               </div>
             </div>
-            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded">Free</span>
+            <span className="badge badge-free">Free</span>
           </label>
 
           {/* OpenAI */}
-          <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+          <label className={`radio-card ${config.provider === 'openai' ? 'selected' : ''}`} style={{ opacity: hasOpenAIKey ? 1 : 0.7 }}>
             <input
               type="radio"
               name="provider"
-              value="openai"
               checked={config.provider === 'openai'}
               onChange={() => handleProviderChange('openai')}
               disabled={!hasOpenAIKey}
-              className="h-4 w-4 text-blue-600 disabled:opacity-50"
+              style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }}
             />
-            <div className="flex-1">
-              <div className="font-medium text-gray-900">OpenAI GPT-4o</div>
-              <div className="text-xs text-gray-500">
-                {hasOpenAIKey ? 'API key configured ✓' : 'Requires API key (add below)'}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text)' }}>OpenAI GPT-4o</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                {hasOpenAIKey ? 'API key configured' : 'Requires API key (add below)'}
+                {hasOpenAIKey && (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth={3}
+                    style={{ display: 'inline-block', marginLeft: '4px', verticalAlign: '-2px' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                )}
               </div>
             </div>
-            <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded">Paid</span>
+            <span className="badge badge-paid">Paid</span>
           </label>
 
           {/* Anthropic */}
-          <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+          <label className={`radio-card ${config.provider === 'anthropic' ? 'selected' : ''}`} style={{ opacity: hasAnthropicKey ? 1 : 0.7 }}>
             <input
               type="radio"
               name="provider"
-              value="anthropic"
               checked={config.provider === 'anthropic'}
               onChange={() => handleProviderChange('anthropic')}
               disabled={!hasAnthropicKey}
-              className="h-4 w-4 text-blue-600 disabled:opacity-50"
+              style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }}
             />
-            <div className="flex-1">
-              <div className="font-medium text-gray-900">Anthropic Claude</div>
-              <div className="text-xs text-gray-500">
-                {hasAnthropicKey ? 'API key configured ✓' : 'Requires API key (add below)'}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text)' }}>Anthropic Claude</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                {hasAnthropicKey ? 'API key configured' : 'Requires API key (add below)'}
+                {hasAnthropicKey && (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth={3}
+                    style={{ display: 'inline-block', marginLeft: '4px', verticalAlign: '-2px' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                )}
               </div>
             </div>
-            <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded">Paid</span>
+            <span className="badge badge-premium">Paid</span>
           </label>
         </div>
       </div>
 
-      {/* OpenAI API Key */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-gray-900">OpenAI API Key</h3>
+      {/* ── OpenAI API Key ───────────────────────────────────── */}
+      <div className="content-card animate-in">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div className="section-header" style={{ marginBottom: 0 }}>
+            <h3>OpenAI API Key</h3>
+          </div>
           {hasOpenAIKey && (
-            <button
-              onClick={handleRemoveOpenAI}
-              className="text-xs text-red-600 hover:text-red-700"
-            >
+            <button onClick={handleRemoveOpenAI} className="btn-danger" style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem' }}>
               Remove Key
             </button>
           )}
         </div>
 
         {hasOpenAIKey ? (
-          <div className="bg-green-50 border border-green-200 rounded p-3">
-            <p className="text-sm text-green-800">✓ OpenAI API key configured and validated</p>
-            <p className="text-xs text-green-600 mt-1">
-              Validated: {new Date(config.openaiValidatedAt!).toLocaleString()}
-            </p>
+          <div className="info-box info-box-green">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ flexShrink: 0 }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p style={{ fontWeight: 600, margin: '0 0 0.25rem 0' }}>OpenAI API key configured and validated</p>
+              <p style={{ fontSize: '0.75rem', margin: 0, opacity: 0.8 }}>
+                Validated: {new Date(config.openaiValidatedAt!).toLocaleString()}
+              </p>
+            </div>
           </div>
         ) : (
           <>
-            <div className="space-y-2">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input
                 type="password"
                 value={openaiKey}
@@ -271,43 +293,38 @@ export function AISettings() {
                   setOpenaiError('');
                 }}
                 placeholder="sk-..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="form-input"
               />
 
               <button
                 onClick={handleOpenAIValidate}
                 disabled={isValidatingOpenAI || !openaiKey.trim()}
-                className="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                className="btn-primary"
               >
                 {isValidatingOpenAI ? 'Validating...' : 'Validate & Save'}
               </button>
             </div>
 
             {openaiValidation === 'error' && (
-              <div className="mt-2 bg-red-50 border border-red-200 rounded p-3">
-                <p className="text-sm text-red-800">✗ {openaiError}</p>
-                <p className="text-xs text-red-600 mt-1">
-                  Check your key at{' '}
-                  <a
-                    href="https://platform.openai.com/api-keys"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline"
-                  >
-                    platform.openai.com
-                  </a>
-                </p>
+              <div className="info-box info-box-red" style={{ marginTop: '0.75rem' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ flexShrink: 0 }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+                <div>
+                  <p style={{ fontWeight: 600, margin: 0 }}>{openaiError}</p>
+                  <p style={{ fontSize: '0.75rem', margin: '0.25rem 0 0 0', opacity: 0.8 }}>
+                    Check your key at{' '}
+                    <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer"
+                      style={{ textDecoration: 'underline' }}>platform.openai.com</a>
+                  </p>
+                </div>
               </div>
             )}
 
-            <p className="text-xs text-gray-500 mt-2">
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.75rem' }}>
               Get your API key from{' '}
-              <a
-                href="https://platform.openai.com/api-keys"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
+              <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer"
+                style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
                 OpenAI Platform
               </a>
             </p>
@@ -315,30 +332,34 @@ export function AISettings() {
         )}
       </div>
 
-      {/* Anthropic API Key */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-gray-900">Anthropic API Key</h3>
+      {/* ── Anthropic API Key ────────────────────────────────── */}
+      <div className="content-card animate-in">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div className="section-header" style={{ marginBottom: 0 }}>
+            <h3>Anthropic API Key</h3>
+          </div>
           {hasAnthropicKey && (
-            <button
-              onClick={handleRemoveAnthropic}
-              className="text-xs text-red-600 hover:text-red-700"
-            >
+            <button onClick={handleRemoveAnthropic} className="btn-danger" style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem' }}>
               Remove Key
             </button>
           )}
         </div>
 
         {hasAnthropicKey ? (
-          <div className="bg-green-50 border border-green-200 rounded p-3">
-            <p className="text-sm text-green-800">✓ Anthropic API key configured and validated</p>
-            <p className="text-xs text-green-600 mt-1">
-              Validated: {new Date(config.anthropicValidatedAt!).toLocaleString()}
-            </p>
+          <div className="info-box info-box-green">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ flexShrink: 0 }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p style={{ fontWeight: 600, margin: '0 0 0.25rem 0' }}>Anthropic API key configured and validated</p>
+              <p style={{ fontSize: '0.75rem', margin: 0, opacity: 0.8 }}>
+                Validated: {new Date(config.anthropicValidatedAt!).toLocaleString()}
+              </p>
+            </div>
           </div>
         ) : (
           <>
-            <div className="space-y-2">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input
                 type="password"
                 value={anthropicKey}
@@ -348,43 +369,39 @@ export function AISettings() {
                   setAnthropicError('');
                 }}
                 placeholder="sk-ant-..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="form-input"
               />
 
               <button
                 onClick={handleAnthropicValidate}
                 disabled={isValidatingAnthropic || !anthropicKey.trim()}
-                className="w-full px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                className="btn-primary"
+                style={{ background: '#7C3AED' }}
               >
                 {isValidatingAnthropic ? 'Validating...' : 'Validate & Save'}
               </button>
             </div>
 
             {anthropicValidation === 'error' && (
-              <div className="mt-2 bg-red-50 border border-red-200 rounded p-3">
-                <p className="text-sm text-red-800">✗ {anthropicError}</p>
-                <p className="text-xs text-red-600 mt-1">
-                  Check your key at{' '}
-                  <a
-                    href="https://console.anthropic.com/settings/keys"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline"
-                  >
-                    console.anthropic.com
-                  </a>
-                </p>
+              <div className="info-box info-box-red" style={{ marginTop: '0.75rem' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ flexShrink: 0 }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+                <div>
+                  <p style={{ fontWeight: 600, margin: 0 }}>{anthropicError}</p>
+                  <p style={{ fontSize: '0.75rem', margin: '0.25rem 0 0 0', opacity: 0.8 }}>
+                    Check your key at{' '}
+                    <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer"
+                      style={{ textDecoration: 'underline' }}>console.anthropic.com</a>
+                  </p>
+                </div>
               </div>
             )}
 
-            <p className="text-xs text-gray-500 mt-2">
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.75rem' }}>
               Get your API key from{' '}
-              <a
-                href="https://console.anthropic.com/settings/keys"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
+              <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer"
+                style={{ color: '#7C3AED', textDecoration: 'none', fontWeight: 600 }}>
                 Anthropic Console
               </a>
             </p>
@@ -392,29 +409,17 @@ export function AISettings() {
         )}
       </div>
 
-      {/* Privacy Notice */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex gap-3">
-          <svg
-            className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <div className="text-sm text-blue-900">
-            <p className="font-medium mb-1">Privacy & Security</p>
-            <p className="text-blue-800">
-              Your API keys are stored locally in your browser only. They are never sent to any
-              server except directly to OpenAI/Anthropic when generating answers. You can remove
-              them at any time.
-            </p>
-          </div>
-        </div>
+      {/* ── Privacy Notice ───────────────────────────────────── */}
+      <div className="privacy-card animate-in">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+        </svg>
+        <p>
+          <strong>Privacy & Security</strong>
+          Your API keys are stored locally in your browser only. They are never sent to any
+          server except directly to OpenAI/Anthropic when generating answers. You can remove
+          them at any time.
+        </p>
       </div>
     </div>
   );

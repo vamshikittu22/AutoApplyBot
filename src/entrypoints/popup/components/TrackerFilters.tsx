@@ -1,6 +1,6 @@
 /**
- * TrackerFilters — redesigned with design system
- * Compact, clean filter row using #0369A1 palette
+ * TrackerFilters
+ * Filter row using design system classes
  */
 
 import React from 'react';
@@ -12,22 +12,18 @@ export function TrackerFilters(): React.ReactElement {
 
   const hasActiveFilters = filterStatus !== null || filterPlatform !== null;
 
-  const selectClass =
-    'w-full text-xs font-medium text-[#0C4A6E] bg-[#F0F9FF] border border-[#BAE6FD] rounded-lg px-2 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0EA5E9] transition-colors duration-150';
-
   return (
-    <div className="bg-white border-b border-[#BAE6FD] px-3 py-2.5">
-      <div className="flex items-center gap-2">
-
+    <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', padding: '0.625rem 0.75rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        
         {/* Status filter */}
         <select
-          id="status-filter"
           value={filterStatus ?? ''}
           onChange={(e) => setFilter('status', e.target.value || null)}
-          className={selectClass}
+          className="filter-select"
           aria-label="Filter by status"
         >
-          <option value="">All status</option>
+          <option value="">All statuses</option>
           <option value="applied">Applied</option>
           <option value="interview">Interview</option>
           <option value="offer">Offer</option>
@@ -37,10 +33,9 @@ export function TrackerFilters(): React.ReactElement {
 
         {/* Platform filter */}
         <select
-          id="platform-filter"
           value={filterPlatform ?? ''}
           onChange={(e) => setFilter('platform', e.target.value || null)}
-          className={selectClass}
+          className="filter-select"
           aria-label="Filter by platform"
         >
           <option value="">All platforms</option>
@@ -50,12 +45,11 @@ export function TrackerFilters(): React.ReactElement {
           <option value="unknown">Unknown</option>
         </select>
 
-        {/* Sort + order */}
+        {/* Sort */}
         <select
-          id="sort-by"
           value={sortBy}
           onChange={(e) => setSorting(e.target.value as 'date' | 'company' | 'status', sortOrder)}
-          className={selectClass}
+          className="filter-select"
           aria-label="Sort by"
         >
           <option value="date">Date</option>
@@ -66,16 +60,20 @@ export function TrackerFilters(): React.ReactElement {
         {/* Sort direction */}
         <button
           onClick={() => setSorting(sortBy, sortOrder === 'asc' ? 'desc' : 'asc')}
-          className="flex-shrink-0 p-1.5 text-[#475569] hover:text-[#0369A1] hover:bg-[#F0F9FF] border border-[#BAE6FD] rounded-lg transition-colors duration-150 cursor-pointer"
+          style={{ 
+            flexShrink: 0, padding: '0.25rem', background: 'var(--bg)', 
+            border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)',
+            color: 'var(--text-secondary)', cursor: 'pointer'
+          }}
+          className="hover:border-primary-light hover:text-primary transition-colors"
           title={sortOrder === 'asc' ? 'Sort descending' : 'Sort ascending'}
-          aria-label="Toggle sort order"
         >
           {sortOrder === 'asc' ? (
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
             </svg>
           ) : (
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21l3.75-3.75" />
             </svg>
           )}
@@ -85,11 +83,15 @@ export function TrackerFilters(): React.ReactElement {
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
-            className="flex-shrink-0 p-1.5 text-[#94A3B8] hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-150 cursor-pointer"
+            style={{ 
+              flexShrink: 0, padding: '0.25rem', background: 'transparent', 
+              border: 'none', borderRadius: 'var(--radius-sm)',
+              color: 'var(--text-muted)', cursor: 'pointer'
+            }}
+            className="hover:bg-red-50 hover:text-red-500 transition-colors"
             title="Clear filters"
-            aria-label="Clear all filters"
           >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>

@@ -1,12 +1,6 @@
 /**
  * TrackerList component
- *
- * Main tracker list view with:
- * - TrackerFilters integration
- * - ApplicationCard list (filtered and sorted)
- * - Empty states (no data, no results)
- * - Loading state
- * - Application count display
+ * Main tracker list view updated with design system
  */
 
 import React, { useEffect } from 'react';
@@ -25,7 +19,6 @@ export function TrackerList(): React.ReactElement {
     filterPlatform,
   } = useTrackerStore();
 
-  // Load applications on mount
   useEffect(() => {
     loadApplications();
   }, [loadApplications]);
@@ -35,66 +28,47 @@ export function TrackerList(): React.ReactElement {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600 text-sm">Loading applications...</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div className="spinner" style={{ margin: '0 auto', width: '2rem', height: '2rem', borderWidth: '2px' }} />
+          <p style={{ marginTop: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem' }}>Loading applications...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Filters */}
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <TrackerFilters />
 
-      {/* Application count */}
-      <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
-        <p className="text-xs text-gray-600">
-          {applications.length} {applications.length === 1 ? 'application' : 'applications'}
+      <div style={{ padding: '0.5rem 0.75rem', background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+        <p style={{ margin: 0, fontSize: '0.6875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+          {applications.length} {applications.length === 1 ? 'APPLICATION' : 'APPLICATIONS'}
         </p>
       </div>
 
-      {/* Application list */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         {applications.length === 0 && !hasActiveFilters && (
-          <div className="text-center py-8">
-            <svg
-              className="h-12 w-12 text-gray-400 mx-auto mb-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <p className="text-gray-600 text-sm mb-1">No applications tracked yet</p>
-            <p className="text-gray-500 text-xs">Apply to a job to see it here automatically!</p>
+          <div style={{ textAlign: 'center', padding: '2rem 1rem' }} className="animate-fade-in">
+            <div style={{ width: '48px', height: '48px', background: 'var(--primary-50)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem text-primary' }}>
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="var(--primary)" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <p style={{ margin: '0 0 0.25rem 0', fontWeight: 700, fontSize: '0.875rem', color: 'var(--text)' }}>No applications yet</p>
+            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Apply to a job to see it here automatically!</p>
           </div>
         )}
 
         {applications.length === 0 && hasActiveFilters && (
-          <div className="text-center py-8">
-            <svg
-              className="h-12 w-12 text-gray-400 mx-auto mb-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <p className="text-gray-600 text-sm mb-1">No applications match your filters</p>
-            <p className="text-gray-500 text-xs">Try adjusting your filter criteria</p>
+          <div style={{ textAlign: 'center', padding: '2rem 1rem' }} className="animate-fade-in">
+            <div style={{ width: '48px', height: '48px', background: 'var(--border-light)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem text-primary' }}>
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="var(--text-muted)" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <p style={{ margin: '0 0 0.25rem 0', fontWeight: 700, fontSize: '0.875rem', color: 'var(--text)' }}>No matches found</p>
+            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Try adjusting your filter criteria</p>
           </div>
         )}
 

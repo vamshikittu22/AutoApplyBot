@@ -1,16 +1,6 @@
 /**
- * Per-Site Disable Toggle Component
- *
- * Allows user to disable extension features for specific job posting.
- * Toggle shown in popup, affects current active tab's job URL.
- *
- * Features:
- * - Detects current job URL from active tab
- * - Shows current enable/disable state
- * - Immediate effect without page reload
- * - Toast confirmation on state change
- *
- * Implements REQ-SAF-02: Per-site disable control
+ * SiteDisableToggle Component
+ * Updated with Taylor-inspired design system token CSS
  */
 
 import React, { useEffect, useState } from 'react';
@@ -29,7 +19,6 @@ export function SiteDisableToggle(): React.ReactElement {
 
   const loadCurrentTabUrl = async () => {
     try {
-      // Get active tab URL
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab?.url) {
         setIsLoading(false);
@@ -38,7 +27,6 @@ export function SiteDisableToggle(): React.ReactElement {
 
       setCurrentUrl(tab.url);
 
-      // Check if current job is disabled
       const disabled = await isJobDisabled(tab.url);
       setIsDisabled(disabled);
       setIsLoading(false);
@@ -53,23 +41,19 @@ export function SiteDisableToggle(): React.ReactElement {
 
     try {
       if (isDisabled) {
-        // Re-enable job
         await enableJob(currentUrl);
         setIsDisabled(false);
         showToastMessage('Extension re-enabled for this job');
 
-        // Notify content script to re-initialize features
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (tab?.id) {
           chrome.tabs.sendMessage(tab.id, { type: 'JOB_ENABLED', url: currentUrl });
         }
       } else {
-        // Disable job
         await disableJob(currentUrl);
         setIsDisabled(true);
         showToastMessage('Extension disabled for this job');
 
-        // Notify content script to disable features
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (tab?.id) {
           chrome.tabs.sendMessage(tab.id, { type: 'JOB_DISABLED', url: currentUrl });
@@ -88,16 +72,18 @@ export function SiteDisableToggle(): React.ReactElement {
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 bg-[#F0F9FF] rounded-xl border border-[#BAE6FD] text-xs text-[#94A3B8]">
-        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#0EA5E9]"></div>
-        <span>Detecting current page...</span>
+      <div className="toggle-card">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+          <div className="spinner" style={{ width: '0.875rem', height: '0.875rem', borderWidth: '1.5px' }}></div>
+          <span>Detecting current page...</span>
+        </div>
       </div>
     );
   }
 
   if (!currentUrl) {
     return (
-      <div className="px-3 py-2 bg-[#F0F9FF] rounded-xl border border-[#BAE6FD] text-xs text-[#94A3B8]">
+      <div className="toggle-card" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
         Open a job posting to enable / disable the extension
       </div>
     );
@@ -105,36 +91,41 @@ export function SiteDisableToggle(): React.ReactElement {
 
   return (
     <>
-      <div className="flex items-center justify-between px-3 py-2 bg-[#F0F9FF] rounded-xl border border-[#BAE6FD]">
-        <div className="flex items-center gap-2">
-          {/* Status dot */}
-          <div className={`w-1.5 h-1.5 rounded-full ${isDisabled ? 'bg-red-400' : 'bg-[#22C55E]'}`} />
-          <span className="text-xs font-medium text-[#0C4A6E]">
+      <div className="toggle-card">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ 
+            width: '6px', height: '6px', borderRadius: '50%',
+            background: isDisabled ? '#EF4444' : '#22C55E' 
+          }} />
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text)' }}>
             Extension {isDisabled ? 'paused' : 'active'} on this page
           </span>
         </div>
 
-        {/* Toggle */}
         <button
           onClick={handleToggle}
-          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0EA5E9] focus:ring-offset-1 ${
-            isDisabled ? 'bg-red-300' : 'bg-[#22C55E]'
-          }`}
+          style={{ 
+            position: 'relative', display: 'inline-flex', height: '20px', width: '36px', 
+            alignItems: 'center', borderRadius: '9999px', cursor: 'pointer', border: 'none',
+            background: isDisabled ? '#FCA5A5' : '#22C55E', transition: 'background-color 200ms'
+          }}
           role="switch"
           aria-checked={!isDisabled}
-          aria-label={isDisabled ? 'Enable extension for this job' : 'Disable extension for this job'}
+          className="focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-1"
         >
           <span
-            className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform duration-200 ${
-              isDisabled ? 'translate-x-1' : 'translate-x-[18px]'
-            }`}
+            style={{ 
+              display: 'inline-block', height: '14px', width: '14px', borderRadius: '50%', 
+              background: 'white', transition: 'transform 200ms',
+              transform: `translateX(${isDisabled ? '4px' : '18px'})`,
+              boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+            }}
           />
         </button>
       </div>
 
-      {/* Toast */}
       {showToast && (
-        <div className="fixed bottom-3 left-1/2 -translate-x-1/2 bg-[#0C4A6E] text-white px-3 py-1.5 rounded-xl shadow-lg text-xs font-medium animate-fade-in whitespace-nowrap">
+        <div className="toast animate-fade-in">
           {toastMessage}
         </div>
       )}

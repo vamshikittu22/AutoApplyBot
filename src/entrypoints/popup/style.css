@@ -1,37 +1,40 @@
-/* UI/UX Pro Max Design System — AutoApply Copilot
- * Style: Minimalism & Swiss Style
- * Typography: Plus Jakarta Sans (SaaS / Professional)
- * Primary: #0369A1 | Secondary: #0EA5E9 | CTA: #22C55E
- * Background: #F0F9FF | Text: #0C4A6E
- */
+/* ══════════════════════════════════════════════════════════════
+   AutoApply Copilot — Popup Design System
+   Matching Options page design language at popup scale
+   Brand: #0369A1 sky-blue family | Plus Jakarta Sans
+   ══════════════════════════════════════════════════════════════ */
 
-/* Tailwind directives — preflight runs here, our rules below override it */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-
-/* ── Design Tokens ─────────────────────────────────────────── */
+/* ── Design Tokens ────────────────────────────────────────────── */
 :root {
-  --color-primary:   #0369A1;
-  --color-primary-light: #0EA5E9;
-  --color-cta:       #22C55E;
-  --color-bg:        #F0F9FF;
-  --color-surface:   #FFFFFF;
-  --color-border:    #BAE6FD;
-  --color-text:      #0C4A6E;
-  --color-muted:     #475569;
-  --color-subtle:    #94A3B8;
-  --radius-sm:       6px;
-  --radius-md:       10px;
-  --radius-lg:       14px;
-  --transition:      150ms ease;
+  --primary:       #0369A1;
+  --primary-light: #0EA5E9;
+  --primary-dark:  #075985;
+  --primary-50:    #F0F9FF;
+  --primary-100:   #E0F2FE;
+  --primary-200:   #BAE6FD;
+  --cta:           #22C55E;
+  --bg:            #F8FAFC;
+  --surface:       #FFFFFF;
+  --border:        #E2E8F0;
+  --border-light:  #F1F5F9;
+  --text:          #1E293B;
+  --text-secondary:#475569;
+  --text-muted:    #94A3B8;
+  --radius-sm:     8px;
+  --radius-md:     12px;
+  --radius-lg:     16px;
+  --shadow-sm:     0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:     0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+  --transition:    200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Popup sizing — must beat Tailwind preflight with !important ── */
-/* Chrome popup window sizes itself to body content. min-width/min-height
-   guarantee Chrome opens the popup at least this large. */
+/* ── Popup Sizing ─────────────────────────────────────────────── */
 body {
   min-width: 400px   !important;
   min-height: 580px  !important;
@@ -50,42 +53,257 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--color-bg);
+  background: var(--bg);
 }
 
-/* ── Base ──────────────────────────────────────────────────── */
-* { box-sizing: border-box; }
+/* ── Base ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', system-ui, sans-serif !important;
   font-size: 14px;
-  color: var(--color-text);
+  line-height: 1.5;
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Scrollbar ─────────────────────────────────────────────── */
+/* ── Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--border);
   border-radius: 99px;
 }
-::-webkit-scrollbar-thumb:hover { background: var(--color-primary-light); }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-200); }
 
-/* ── Focus ring ────────────────────────────────────────────── */
+/* ── Focus Ring ───────────────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--color-primary-light);
+  outline: 2px solid var(--primary-light);
   outline-offset: 2px;
 }
 
-/* ── Micro-animations ──────────────────────────────────────── */
+/* ── Popup Gradient Header ────────────────────────────────────── */
+.popup-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, #38BDF8 100%);
+  padding: 1rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.popup-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ── Popup Pill Tab Nav ───────────────────────────────────────── */
+.popup-tabs {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  padding: 0 0.25rem;
+}
+
+.popup-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+}
+
+.popup-tab:hover {
+  color: var(--text-secondary);
+}
+
+.popup-tab.active {
+  color: var(--primary);
+}
+
+.popup-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1rem;
+  right: 1rem;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px 2px 0 0;
+}
+
+/* ── Autofill CTA ─────────────────────────────────────────────── */
+.autofill-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--primary);
+  background: rgba(255,255,255,0.95);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.autofill-btn:hover {
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+
+.autofill-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Status Badge ─────────────────────────────────────────────── */
+.status-applied   { background: #DBEAFE; color: #1E40AF; }
+.status-interview { background: #FEF9C3; color: #854D0E; }
+.status-offer     { background: #DCFCE7; color: #166534; }
+.status-rejected  { background: #FEE2E2; color: #991B1B; }
+.status-withdrawn { background: #F1F5F9; color: #475569; }
+
+.platform-workday    { background: #EDE9FE; color: #5B21B6; }
+.platform-greenhouse { background: #DCFCE7; color: #166534; }
+.platform-lever      { background: #DBEAFE; color: #1E40AF; }
+.platform-unknown    { background: #F1F5F9; color: #64748B; }
+
+/* ── Site Toggle Card ─────────────────────────────────────────── */
+.toggle-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* ── Volume Warning ───────────────────────────────────────────── */
+.warning-card {
+  display: flex;
+  align-items: start;
+  gap: 0.625rem;
+  padding: 0.625rem 0.875rem;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius-md);
+}
+
+/* ── Application Card (Popup) ─────────────────────────────────── */
+.app-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.875rem;
+  transition: all var(--transition);
+}
+
+.app-card:hover {
+  border-color: var(--primary-200);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Filter Row ───────────────────────────────────────────────── */
+.filter-select {
+  width: 100%;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.375rem 0.5rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.filter-select:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.12);
+}
+
+/* ── Profile/Settings Stub ────────────────────────────────────── */
+.stub-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  text-align: center;
+  gap: 1.25rem;
+}
+
+.stub-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-50);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius-lg);
+}
+
+.stub-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: white;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 1px 3px rgba(3, 105, 161, 0.2);
+}
+
+.stub-btn:hover {
+  background: var(--primary-dark);
+  box-shadow: 0 4px 8px rgba(3, 105, 161, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ── Micro Animations ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: no-preference) {
   .animate-fade-in {
-    animation: fadeIn 180ms ease both;
+    animation: fadeIn 200ms ease both;
   }
   .animate-slide-up {
-    animation: slideUp 200ms ease both;
+    animation: slideUp 250ms cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 }
 
@@ -99,16 +317,19 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Status badge utilities ─────────────────────────────────── */
-.status-applied   { background: #DBEAFE; color: #1E40AF; }
-.status-interview { background: #FEF9C3; color: #854D0E; }
-.status-offer     { background: #DCFCE7; color: #166534; }
-.status-rejected  { background: #FEE2E2; color: #991B1B; }
-.status-withdrawn { background: #F1F5F9; color: #475569; }
-
-/* ── Platform badge utilities ───────────────────────────────── */
-.platform-workday    { background: #EDE9FE; color: #5B21B6; }
-.platform-greenhouse { background: #DCFCE7; color: #166534; }
-.platform-lever      { background: #DBEAFE; color: #1E40AF; }
-.platform-unknown    { background: #F1F5F9; color: #64748B; }
-
+/* ── Toast ─────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem 1rem;
+  background: var(--text);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  white-space: nowrap;
+  z-index: 50;
+}
